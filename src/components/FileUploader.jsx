@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { parseCSV } from "../util/csvUtil";
+import { insertTransactions } from "../util/transactionQueries";
 
 const FileUploader = () => {
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -12,8 +13,9 @@ const FileUploader = () => {
 		if (selectedFile) {
 			const reader = new FileReader();
 
-			reader.onload = (event) => {
-				parseCSV(event);
+			reader.onload = async (event) => {
+				const transactions = parseCSV(event);
+				await insertTransactions(transactions);
 			};
 
 			reader.readAsText(selectedFile);

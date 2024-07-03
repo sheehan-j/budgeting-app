@@ -37,4 +37,6 @@ export const parseCSV = (event) => {
 		});
 		transactions.push(newTransaction);
 	});
+
+	return transactions;
 };
