@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import FileUploader from "../components/FileUploader";
 import TransactionTable from "../components/TransactionTable";
 import { getTransactions } from "../util/transactionQueries";
 
@@ -16,9 +15,8 @@ const Home = () => {
 	}, []);
 
 	return (
-		<div>
+		<div className="w-screen min-h-screen p-3 flex justify-center items-center">
 			<TransactionTable transactions={transactions} />
-			<FileUploader />
 		</div>
 	);
 };
