@@ -29,7 +29,7 @@ TransactionTable.propTypes = {
 			id: PropTypes.number.isRequired,
 			date: PropTypes.string.isRequired,
 			merchant: PropTypes.string.isRequired,
-			amount: PropTypes.number.isRequired,
+			amount: PropTypes.string.isRequired,
 		})
 	).isRequired,
 };

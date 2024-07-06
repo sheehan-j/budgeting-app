@@ -3,7 +3,7 @@ import { insertTransactions } from "../util/transactionQueries";
 import { parseCSV } from "../util/csvUtil";
 import supabase from "../config/supabaseClient";
 
-const FileUpload = () => {
+const Transactions = () => {
 	const [selectedConfigurationName, setselectedConfigurationName] = useState("");
 	const [configurations, setConfigurations] = useState([]);
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -43,7 +43,7 @@ const FileUpload = () => {
 	};
 
 	return (
-		<div className="w-screen h-screen flex flex-col justify-center items-center">
+		<div className="grow h-full overflow-y-scroll bg-slate-50">
 			<select value={selectedConfigurationName} onChange={(e) => setselectedConfigurationName(e.target.value)}>
 				<option value="" disabled></option>
 				{configurations.map((configuration) => (
@@ -60,4 +60,4 @@ const FileUpload = () => {
 	);
 };
 
-export default FileUpload;
+export default Transactions;

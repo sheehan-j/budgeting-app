@@ -24,8 +24,8 @@ export const parseCSV = (event, configuration) => {
 					if (cell.includes("-")) {
 						if (configuration.minusSymbolMeaning) {
 							cell = cell.replace("-", "");
-							if (configuration.minusSymbolMeaning === "charge") coefficient = 1;
-							else if (configuration.minusSymbolMeaning === "credit") coefficient = -1;
+							if (configuration.minusSymbolMeaning === "charge") coefficient = 1.0;
+							else if (configuration.minusSymbolMeaning === "credit") coefficient = -1.0;
 							else throw Error("Internal error: minusSymbolMeaning is not valid.");
 						} else {
 							throw Error(
@@ -35,8 +35,8 @@ export const parseCSV = (event, configuration) => {
 					} else if (cell.includes("+")) {
 						if (configuration.plusSymbolMeaning) {
 							cell = cell.replace("-", "");
-							if (configuration.plusSymbolMeaning === "charge") coefficient = 1;
-							else if (configuration.plusSymbolMeaning === "credit") coefficient = -1;
+							if (configuration.plusSymbolMeaning === "charge") coefficient = 1.0;
+							else if (configuration.plusSymbolMeaning === "credit") coefficient = -1.0;
 							else throw Error("Internal error: plusSymbolMeaning is not valid.");
 						} else {
 							throw Error(
@@ -45,13 +45,13 @@ export const parseCSV = (event, configuration) => {
 						}
 					} else {
 						if (configuration.noSymbolMeaning) {
-							if (configuration.noSymbolMeaning === "charge") coefficient = 1;
-							else if (configuration.noSymbolMeaning === "credit") coefficient = -1;
+							if (configuration.noSymbolMeaning === "charge") coefficient = 1.0;
+							else if (configuration.noSymbolMeaning === "credit") coefficient = -1.0;
 							else throw Error("Internal error: noSymbolMeaning is not valid.");
 						}
 					}
 
-					newTransaction.amount = parseFloat(cell) * coefficient;
+					newTransaction.amount = parseFloat(parseFloat(cell) * coefficient);
 				} catch (error) {
 					alert(error.message);
 					return [];

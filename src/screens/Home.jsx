@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react";
-import TransactionTable from "../components/TransactionTable";
-import { getTransactions } from "../util/transactionQueries";
+import { useState } from "react";
+import Navbar from "../components/Navbar";
+import Dashboard from "./Dashboard";
+import Transactions from "./Transactions";
+import Settings from "./Settings";
 
 const Home = () => {
-	const [transactions, setTransactions] = useState([]);
-
-	useEffect(() => {
-		const fetchTransactions = async () => {
-			const data = await getTransactions();
-			setTransactions(data);
-		};
-
-		fetchTransactions();
-	}, []);
+	const [activePage, setActivePage] = useState("Dashboard");
 
 	return (
-		<div className="w-screen min-h-screen p-3 flex justify-center items-center">
-			<TransactionTable transactions={transactions} />
+		<div className="w-screen h-screen flex overflow-hidden relative">
+			<Navbar activePage={activePage} setActivePage={setActivePage} />
+			{activePage === "Dashboard" && <Dashboard />}
+			{activePage === "Transactions" && <Transactions />}
+			{activePage === "Settings" && <Settings />}
 		</div>
 	);
 };
