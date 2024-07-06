@@ -16,7 +16,7 @@ export const parseCSV = (event, configuration) => {
 			}
 			cell = cell.trim();
 
-			if (index + 1 === configuration.amountRowNum) {
+			if (index + 1 === configuration.amountColNum) {
 				try {
 					if (cell.includes("$")) cell = cell.replace("$", "");
 
@@ -56,9 +56,9 @@ export const parseCSV = (event, configuration) => {
 					alert(error.message);
 					return [];
 				}
-			} else if (index + 1 === configuration.dateRowNum) {
+			} else if (index + 1 === configuration.dateColNum) {
 				newTransaction.date = new Date(cell);
-			} else if (index + 1 === configuration.merchantRowNum) {
+			} else if (index + 1 === configuration.merchantColNum) {
 				newTransaction.merchant = cell;
 			}
 		});

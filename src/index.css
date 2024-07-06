@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input {
+	@apply border border-slate-300 rounded px-1.5 py-1;
+}
+
+body {
+	@apply lg:text-sm;
+}

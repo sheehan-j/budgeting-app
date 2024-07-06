@@ -10,8 +10,9 @@ export default {
 				cGreen: {
 					DEFAULT: "rgb(124, 194, 112)",
 					dark: "rgb(102, 174, 89)",
-					light: "rgb(165, 221, 155)",
-					lightTrans: "rgba(165, 221, 155, 0.5)",
+					light: "rgb(212, 244, 206)",
+					lightHover: "rgb(210, 240, 204)",
+					lightTrans: "rgb(212, 244, 206, 0.3)",
 				},
 			},
 		},

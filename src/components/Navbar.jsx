@@ -3,7 +3,8 @@ import NavItem from "./NavItem";
 
 const Navbar = ({ activePage, setActivePage }) => {
 	return (
-		<nav className="h-full px-6 py-5 bg-white flex flex-col gap-3">
+		<nav className="h-full px-6 py-10 w-3/12 lg:w-2/12 bg-white flex flex-col gap-5">
+			<div className="font-extrabold text-cGreen-dark text-4xl px-3">LOGO</div>
 			<NavItem
 				text={"Dashboard"}
 				onClick={() => setActivePage("Dashboard")}

@@ -13,7 +13,7 @@ const Dashboard = () => {
 		fetchTransactions();
 	}, []);
 	return (
-		<div className="grow h-full overflow-y-scroll bg-slate-50">
+		<div className="grow h-full overflow-y-scroll bg-slate-100">
 			<TransactionTable transactions={transactions} />
 		</div>
 	);

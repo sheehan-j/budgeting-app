@@ -43,7 +43,7 @@ const Transactions = () => {
 	};
 
 	return (
-		<div className="grow h-full overflow-y-scroll bg-slate-50">
+		<div className="grow h-full overflow-y-scroll bg-slate-100">
 			<select value={selectedConfigurationName} onChange={(e) => setselectedConfigurationName(e.target.value)}>
 				<option value="" disabled></option>
 				{configurations.map((configuration) => (

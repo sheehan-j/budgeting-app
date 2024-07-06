@@ -3,14 +3,23 @@ import PropTypes from "prop-types";
 const CSVSymbolOption = ({ symbolMeaning, firstQuestion, firstOnChange, secondQuestion, secondOnChange }) => {
 	return (
 		<div>
-			<div>
+			<div className="flex justify-between">
 				<label>{firstQuestion}</label>
-				<input type="checkbox" checked={symbolMeaning !== null} onChange={firstOnChange} />
+				<input
+					className="accent-cGreen-light text-white bg-white"
+					type="checkbox"
+					checked={symbolMeaning !== null}
+					onChange={firstOnChange}
+				/>
 			</div>
 			{symbolMeaning && (
-				<div>
+				<div className="mt-1 flex justify-between">
 					<label>{secondQuestion}</label>
-					<select value={symbolMeaning} onChange={secondOnChange}>
+					<select
+						className="border border-slate-300 text-sm rounded p-0.5"
+						value={symbolMeaning}
+						onChange={secondOnChange}
+					>
 						<option value="charge">Charge</option>
 						<option value="credit">Credit</option>
 					</select>
