@@ -37,12 +37,12 @@ const ConfigurationCreator = () => {
 
 	const handleClickConfiguration = (configurationName) => {
 		setActiveConfiguration(
-			configurations.find((configuration) => configuration.configurationName === configurationName)
+			configurations?.find((configuration) => configuration.configurationName === configurationName)
 		);
 	};
 
 	const handleCreateConfiguration = async () => {
-		if (configurations.some((configuration) => configuration.configurationName === newConfigurationName)) {
+		if (configurations?.some((configuration) => configuration.configurationName === newConfigurationName)) {
 			alert("Configuration name already exists.");
 			return;
 		}

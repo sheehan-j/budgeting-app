@@ -9,3 +9,81 @@ input {
 body {
 	@apply lg:text-sm;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+@keyframes fadeInDown {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeOutUp {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+}
+
+@keyframes fadeInUp {
+	0% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeOutDown {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+
+.category-menu-down,
+.category-menu-up {
+	animation-fill-mode: forwards;
+}
+
+.category-menu-down.enter {
+	animation-name: fadeInDown;
+	animation-duration: 0.2s;
+}
+
+.category-menu-down.exit {
+	animation-name: fadeOutUp;
+	animation-duration: 0.2s;
+}
+
+.category-menu-up.enter {
+	animation-name: fadeInUp;
+	animation-duration: 0.2s;
+}
+
+.category-menu-up.exit {
+	animation-name: fadeOutDown;
+	animation-duration: 0.2s;
+}
