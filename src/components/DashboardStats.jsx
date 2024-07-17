@@ -50,7 +50,7 @@ const DashboardStats = () => {
 						<div className="text-lg font-semibold mb-1">Top Categories</div>
 						<div className="flex flex-col gap-2">
 							{dashboardStats?.topCategories?.map((category) => (
-								<div key={category.name} className="flex flex-col gap-1">
+								<div key={category.name} className="flex flex-col gap-1.5">
 									<div className="w-full flex justify-between items-center">
 										<div>
 											{category.name} {`(${category.percentage.toFixed()}%)`}
