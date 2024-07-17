@@ -8,7 +8,7 @@ import MerchantFilterMenu from "./filtermenus/MerchantFilterMenu";
 import ConfigurationFilterMenu from "./filtermenus/ConfigurationFilterMenu";
 import CategoryFilterMenu from "./filtermenus/CategoryFilterMenu";
 
-const AddFilterButton = () => {
+const FilterButtons = () => {
 	const { filterMenuVisible, filterMenuAnimating, openFilterMenu, closeFilterMenu } = useAnimationStore((state) => ({
 		filterMenuVisible: state.filterMenuVisible,
 		filterMenuAnimating: state.filterMenuAnimating,
@@ -103,7 +103,7 @@ const AddFilterButton = () => {
 					onClick={filterMenuVisible ? closeFilterMenu : openFilterMenu}
 					className="add-filter-button font-normal text-slate-600 bg-cGreen-light hover:bg-cGreen-lightHover border border-slate-300 rounded text-sm py-2 px-2"
 				>
-					<div className="w-[1.25rem] p-0.5">
+					<div className="w-[1.25rem]" style={{ padding: "0.2rem" }}>
 						<img src="./plus_dark_slate.svg" className="add-filter-button" />
 					</div>
 				</button>
@@ -177,7 +177,7 @@ const AddFilterButton = () => {
 					onClick={resetFilters}
 					className="font-normal hover:bg-slate-50 border border-slate-200 rounded text-sm py-2 px-2"
 				>
-					<div className="w-[1.25rem] p-0.5">
+					<div className="w-[1.25rem]" style={{ padding: "0.2rem" }}>
 						<img src="./close.svg" className="w-full" />
 					</div>
 					{/* Clear */}
@@ -187,4 +187,4 @@ const AddFilterButton = () => {
 	);
 };
 
-export default AddFilterButton;
+export default FilterButtons;

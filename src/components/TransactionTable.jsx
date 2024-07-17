@@ -8,7 +8,7 @@ import ButtonSpinner from "./ButtonSpinner";
 import supabase from "../config/supabaseClient";
 import TransactionTableCategoryButton from "./TransactionTableCategoryButton";
 import TableSorter from "./TableSorter";
-import AddFilterButton from "./AddFilterButton";
+import FilterButtons from "./FilterButtons";
 
 const TransactionTable = ({ transactions, setTransactions, transactionsLoading }) => {
 	const {
@@ -171,7 +171,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 							))}
 						</div>
 						<div className="shrink-0">
-							<AddFilterButton />
+							<FilterButtons />
 						</div>
 					</div>
 				</div>
