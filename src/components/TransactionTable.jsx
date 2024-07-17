@@ -9,6 +9,7 @@ import supabase from "../config/supabaseClient";
 import TransactionTableCategoryButton from "./TransactionTableCategoryButton";
 import TableSorter from "./TableSorter";
 import FilterButtons from "./FilterButtons";
+import Pagination from "./Pagination";
 
 const TransactionTable = ({ transactions, setTransactions, transactionsLoading }) => {
 	const {
@@ -41,6 +42,9 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 	const [localTransactions, setLocalTransactions] = useState(transactions);
 	const tableRef = useRef(null);
 	const filtersRef = useRef(null);
+
+	const [page, setPage] = useState(0);
+	const pageSize = 20;
 
 	useEffect(() => {
 		if (transactions) {
@@ -202,38 +206,58 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 					<TableSorter column={"amount"} sortState={dashboardSortState} onSorterClick={onSorterClick} />
 				</div>
 			</div>
-			{!transactionsLoading &&
-				localTransactions?.map((transaction, index) => (
-					<div
-						key={transaction.id}
-						className={`border-t ${
-							index < transaction.length - 1 && totalTransactionCount <= 30 ? "border-b" : ""
-						} border-slate-200 flex items-center py-3 px-5 flex`}
-					>
-						<div className="w-[11%] pr-4">{transaction.date}</div>
-						<div className="w-[37%] pr-4">{transaction.merchant}</div>
-						<div className="w-[20%] pr-4 relative">
-							<TransactionTableCategoryButton
-								transaction={transaction}
-								tableRef={tableRef}
-								categories={categories}
-								categoriesLoading={categoriesLoading}
-								editTransactionCategory={editTransactionCategory}
-								categoryUpdateLoading={categoryUpdateLoading}
-							/>
-						</div>
-						<div className="w-[20%] pr-4">{transaction.configurationName}</div>
-						<div className={`${transaction.amount.includes("-") ? "text-cGreen-dark" : ""} w-[12%]`}>
-							{transaction.amount}
-						</div>
-					</div>
-				))}
+			<div className="flex flex-col justify-between">
+				<div>
+					{!transactionsLoading &&
+						localTransactions
+							?.slice(page * pageSize, page * pageSize + pageSize)
+							?.map((transaction, index) => (
+								<div
+									key={transaction.id}
+									className={`${
+										index <
+										(pageSize - 1 < localTransactions.length - 1
+											? pageSize - 1
+											: localTransactions.length - 1)
+											? "border-b"
+											: ""
+									} border-slate-200 flex items-center py-3 px-5 flex`}
+								>
+									<div className="w-[11%] pr-4">{transaction.date}</div>
+									<div className="w-[37%] pr-4">{transaction.merchant}</div>
+									<div className="w-[20%] pr-4 relative">
+										<TransactionTableCategoryButton
+											transaction={transaction}
+											tableRef={tableRef}
+											categories={categories}
+											categoriesLoading={categoriesLoading}
+											editTransactionCategory={editTransactionCategory}
+											categoryUpdateLoading={categoryUpdateLoading}
+										/>
+									</div>
+									<div className="w-[20%] pr-4">{transaction.configurationName}</div>
+									<div
+										className={`${
+											transaction.amount.includes("-") ? "text-cGreen-dark" : ""
+										} w-[12%]`}
+									>
+										{transaction.amount}
+									</div>
+								</div>
+							))}
 
-			{transactionsLoading && (
-				<div className="flex relative justify-center text-sm text-slate-300 items-center p-5 opacity-80">
-					<ButtonSpinner />
+					{transactionsLoading && (
+						<div className="flex relative justify-center text-sm text-slate-300 items-center p-5 opacity-80">
+							<ButtonSpinner />
+						</div>
+					)}
 				</div>
-			)}
+				<Pagination
+					page={page}
+					setPage={setPage}
+					pageLimit={Math.ceil(localTransactions?.length / pageSize) - 1}
+				/>
+			</div>
 		</div>
 	);
 };
