@@ -82,21 +82,21 @@ const UploadModal = () => {
 				<div
 					onClick={closeUploadModal}
 					className={`${uploadModalAnimating ? (uploadModalVisible ? "enter" : "exit") : ""}
-			z-[99] overflow-hidden upload-modal top-0 left-0 absolute w-full h-full flex items-center justify-center bg-[rgba(0,0,0,0.4)]`}
+			z-[99] overflow-hidden upload-modal top-0 left-0 absolute w-full h-full flex items-center justify-center bg-[rgba(0,0,0,0.25)]`}
 				>
 					<div
 						onClick={(e) => {
 							e.stopPropagation();
 						}}
-						className="w-1/3 flex flex-col gap-2 bg-white rounded-lg border border-slate-200 p-3"
+						className="w-1/3 flex flex-col gap-2 bg-white rounded-xl border border-slate-200 p-3"
 					>
-						<div className="flex bg-white w-full justify-between items-center p-3 rounded-lg border border-slate-200">
+						<div className="flex bg-slate-50 w-full justify-between items-center px-3 py-2.5 rounded-lg border border-slate-200">
 							<div className="text-lg text-slate-600 font-semibold">Upload Transactions</div>
 							<button onClick={closeUploadModal}>
-								<img src="./close.svg" alt="close" className="w-5 h-5" onClick={closeUploadModal} />
+								<img src="./close.svg" alt="close" className="w-4" onClick={closeUploadModal} />
 							</button>
 						</div>
-						<div className="flex flex-col gap-3 bg-white w-full justify-between items-center rounded-lg p-3 border border-slate-200">
+						<div className="flex flex-col gap-3 bg-white w-full justify-between items-center rounded-lg p-3">
 							<div className="flex justify-between items-center w-full">
 								<span className="text-slate-600 align-bottom">Select an upload configuration: </span>
 								<select
