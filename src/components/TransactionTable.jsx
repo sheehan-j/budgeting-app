@@ -19,7 +19,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 		fetchDashboardStats,
 		dashboardSortState,
 		setDashboardSortState,
-		totalTransactionCount,
 		filters,
 		setFilters,
 	} = useDataStore((state) => ({
@@ -206,8 +205,8 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 					<TableSorter column={"amount"} sortState={dashboardSortState} onSorterClick={onSorterClick} />
 				</div>
 			</div>
-			<div className="flex flex-col justify-between">
-				<div>
+			<div className="flex flex-col grow">
+				<div className="grow">
 					{!transactionsLoading &&
 						localTransactions
 							?.slice(page * pageSize, page * pageSize + pageSize)
