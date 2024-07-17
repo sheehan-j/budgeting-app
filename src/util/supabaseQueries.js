@@ -1,11 +1,7 @@
 import supabase from "../config/supabaseClient";
 
-export const getDashboardTransactions = async () => {
-	const today = new Date();
-	let { data, error } = await supabase
-		.from("transactions")
-		.select("*")
-		.eq("month", today.getMonth() + 1);
+export const getTransactions = async () => {
+	let { data, error } = await supabase.from("transactions").select("*");
 	if (error) {
 		alert("Error retrieving transactions:" + error.message);
 		return [];

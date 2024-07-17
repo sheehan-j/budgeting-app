@@ -1,13 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useDataStore } from "../util/dataStore";
-import { Link } from "react-router-dom";
+import { useAnimationStore } from "../util/animationStore";
+import { filterTransactions } from "../util/filterUtil";
+import { sortTransactions } from "../util/sortUtil";
 import PropTypes from "prop-types";
 import ButtonSpinner from "./ButtonSpinner";
 import supabase from "../config/supabaseClient";
 import TransactionTableCategoryButton from "./TransactionTableCategoryButton";
 import TableSorter from "./TableSorter";
+import AddFilterButton from "./AddFilterButton";
 
-const TransactionTable = ({ transactions, setTransactions, transactionsLoading, linkToTransactionsPage }) => {
+const TransactionTable = ({ transactions, setTransactions, transactionsLoading }) => {
 	const {
 		categories,
 		categoriesLoading,
@@ -16,6 +19,8 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 		dashboardSortState,
 		setDashboardSortState,
 		totalTransactionCount,
+		filters,
+		setFilters,
 	} = useDataStore((state) => ({
 		categories: state.categories,
 		categoriesLoading: state.categoriesLoading,
@@ -24,43 +29,27 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 		dashboardSortState: state.dashboardSortState,
 		setDashboardSortState: state.setDashboardSortState,
 		totalTransactionCount: state.totalTransactionCount,
+		filters: state.filters,
+		setFilters: state.setFilters,
 	}));
-	const [visibleCategoryMenu, setVisibleCategoryMenu] = useState(null);
-	const [animatingCategoryMenu, setAnimatingCategoryMenu] = useState(null);
-	const [menuDirectionDown, setMenuDirectionDown] = useState(true);
+	const { openUploadModal, closeCategoryMenu } = useAnimationStore((state) => ({
+		openUploadModal: state.openUploadModal,
+		closeCategoryMenu: state.closeCategoryMenu,
+	}));
 	const [categoryUpdateLoading, setCategoryUpdateLoading] = useState(false);
+	const [showFilters, setShowFilters] = useState(false);
+	const [localTransactions, setLocalTransactions] = useState(transactions);
 	const tableRef = useRef(null);
+	const filtersRef = useRef(null);
 
-	const openCategoryMenu = (transactionId, buttonRef) => {
-		if (visibleCategoryMenu === transactionId) return;
-
-		const buttonRect = buttonRef.getBoundingClientRect();
-		const tableRect = tableRef.current.getBoundingClientRect();
-		const spaceBelow = tableRect.bottom - buttonRect.bottom;
-		const spaceAbove = buttonRect.top - tableRect.top;
-
-		if (spaceBelow < 300 && spaceAbove > spaceBelow) {
-			setMenuDirectionDown(false);
-		} else {
-			setMenuDirectionDown(true);
+	useEffect(() => {
+		if (transactions) {
+			let newTransactions = [...transactions];
+			newTransactions = filterTransactions(transactions, filters);
+			newTransactions = sortTransactions(newTransactions, dashboardSortState);
+			setLocalTransactions(newTransactions);
 		}
-
-		setAnimatingCategoryMenu(transactionId);
-		setVisibleCategoryMenu(transactionId);
-		setTimeout(() => {
-			setAnimatingCategoryMenu(null);
-		}, 200);
-	};
-
-	const closeCategoryMenu = () => {
-		if (!visibleCategoryMenu) return;
-		setAnimatingCategoryMenu(visibleCategoryMenu);
-		setVisibleCategoryMenu(null);
-		setTimeout(() => {
-			// setVisibleCategoryMenu(null);
-			setAnimatingCategoryMenu(null);
-		}, 200);
-	};
+	}, [filters, dashboardSortState, transactions]);
 
 	const editTransactionCategory = async (transaction, categoryName) => {
 		if (categoryUpdateLoading) return;
@@ -89,12 +78,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 		fetchDashboardStats();
 	};
 
-	window.onclick = (event) => {
-		if (!event.target.matches(".category-button") && !event.target.matches(".category-menu")) {
-			closeCategoryMenu();
-		}
-	};
-
 	const onSorterClick = (column) => {
 		let newDashboardSortState = {};
 		if (dashboardSortState?.column === column) {
@@ -105,48 +88,92 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 		}
 
 		setDashboardSortState(newDashboardSortState);
-		let sortedTransactions = [...transactions];
-		sortedTransactions.sort((a, b) => {
-			// Set sort column and direction, default to desc date
-			const sortColumn = newDashboardSortState?.column || "date";
-			const sortDirection = newDashboardSortState?.direction || "desc";
-
-			let aVal, bVal;
-			if (sortColumn === "date") {
-				aVal = new Date(a[sortColumn]);
-				bVal = new Date(b[sortColumn]);
-			} else if (sortColumn == "amount") {
-				aVal = parseFloat(a[sortColumn]);
-				bVal = parseFloat(b[sortColumn]);
-			} else {
-				aVal = a[sortColumn];
-				bVal = b[sortColumn];
-			}
-
-			if (aVal < bVal) {
-				return sortDirection === "asc" ? -1 : 1;
-			}
-			if (aVal > bVal) {
-				return sortDirection === "asc" ? 1 : -1;
-			}
-			return 0;
-		});
-		setTransactions(sortedTransactions);
 	};
+
+	useLayoutEffect(() => {
+		if (showFilters) {
+			filtersRef.current.style.maxHeight = `${filtersRef.current.scrollHeight}px`;
+		} else {
+			filtersRef.current.style.maxHeight = "0";
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [showFilters, filters]);
 
 	return (
 		<div ref={tableRef} className="w-full grow flex flex-col bg-white border border-slate-300 rounded-2xl">
 			<div className="flex items-center justify-between text-lg text-slate-600 font-semibold px-5 py-3">
 				<span>Transactions</span>
 				<div className="flex gap-2">
-					<Link to="/transactions">
-						<button className="border-slate-200 text-slate-500 hover:bg-slate-50 text-sm font-normal px-2 py-1 border-slate-300 border rounded">
-							View Full Table
-						</button>
-					</Link>
-					<button className="relative font-normal text-slate-600 bg-cGreen-light hover:bg-cGreen-lightHover border border-slate-300 rounded text-sm py-1 px-3">
+					<button
+						onClick={() => {
+							setShowFilters(!showFilters);
+						}}
+						className="border-slate-200 text-slate-500 hover:bg-slate-50 text-sm font-normal px-2 py-1 border-slate-300 border rounded"
+					>
+						{showFilters ? "Hide Filters" : "Show Filters"}
+					</button>
+					<button
+						onClick={openUploadModal}
+						className="relative font-normal text-slate-600 bg-cGreen-light hover:bg-cGreen-lightHover border border-slate-300 rounded text-sm py-1 px-3"
+					>
 						Upload
 					</button>
+				</div>
+			</div>
+			<div
+				ref={filtersRef}
+				className={`${showFilters ? "mb-3" : "overflow-hidden"} relative transition-[max-height] duration-200`}
+			>
+				<div className="w-full px-5">
+					<div className="border border-slate-300 rounded-lg p-2 flex justify-between items-center">
+						<div className="flex flex-wrap gap-2">
+							{filters.map((filter, index) => (
+								<div
+									key={index}
+									className="border border-slate-200 py-1.5 px-2 rounded flex items-center gap-1 shrink-0"
+								>
+									<span className="text-slate-600 font-semibold">{filter.type}: </span>
+									{filter.type === "Date" && (
+										<span>{`${filter.start.month}/${filter.start.day}/${filter.start.year} to ${filter.end.month}/${filter.end.day}/${filter.end.year}`}</span>
+									)}
+									{filter.type === "Merchant" && <span>{filter.merchant}</span>}
+									{filter.type === "Category" && (
+										<span
+											className="text-slate-600 px-1.5 rounded"
+											style={{
+												backgroundColor: filter.category.color,
+												// 	borderWidth: "1px",
+												// 	borderColor: filter.category.colorDark,
+											}}
+										>
+											{filter.category.name}
+										</span>
+									)}
+									{filter.type === "Configuration" && <span>{filter.configuration}</span>}
+									{filter.type === "Amount" && (
+										<span>
+											{filter.condition === "lessThan" && "Less Than"}
+											{filter.condition === "equals" && "Equals"}
+											{filter.condition === "greaterThan" && "Greater Than"} {filter.amount}
+										</span>
+									)}
+									<button
+										onClick={() => {
+											const newFilters = [...filters];
+											newFilters.splice(index, 1);
+											setFilters(newFilters);
+										}}
+										className="hover:bg-slate-100 h-full"
+									>
+										<img className="w-3" src="./close.svg" />
+									</button>
+								</div>
+							))}
+						</div>
+						<div className="shrink-0">
+							<AddFilterButton />
+						</div>
+					</div>
 				</div>
 			</div>
 			<div className="bg-slate-100 py-3 px-5 w-full flex box-border">
@@ -176,7 +203,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 				</div>
 			</div>
 			{!transactionsLoading &&
-				transactions?.map((transaction, index) => (
+				localTransactions?.map((transaction, index) => (
 					<div
 						key={transaction.id}
 						className={`border-t ${
@@ -188,12 +215,9 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 						<div className="w-[20%] pr-4 relative">
 							<TransactionTableCategoryButton
 								transaction={transaction}
-								visibleCategoryMenu={visibleCategoryMenu}
-								animatingCategoryMenu={animatingCategoryMenu}
+								tableRef={tableRef}
 								categories={categories}
 								categoriesLoading={categoriesLoading}
-								menuDirectionDown={menuDirectionDown}
-								openCategoryMenu={openCategoryMenu}
 								editTransactionCategory={editTransactionCategory}
 								categoryUpdateLoading={categoryUpdateLoading}
 							/>
@@ -204,15 +228,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading, 
 						</div>
 					</div>
 				))}
-			{!transactionsLoading && totalTransactionCount > 30 && (
-				<div className="border-slate-200 border-t flex items-center justify-center py-3 px-5 ">
-					<Link to="/transactions">
-						<button className="border-slate-200 hover:bg-slate-50 font-medium px-2 py-1 border-slate-300 border rounded">
-							View Full Table
-						</button>
-					</Link>
-				</div>
-			)}
 
 			{transactionsLoading && (
 				<div className="flex relative justify-center text-sm text-slate-300 items-center p-5 opacity-80">

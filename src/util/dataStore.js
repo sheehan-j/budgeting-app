@@ -1,6 +1,10 @@
 import { create } from "zustand";
-import { getDashboardTransactions, getConfigurations, getCategories, getDashboardStats } from "./supabaseQueries";
+import { getTransactions, getConfigurations, getCategories, getDashboardStats } from "./supabaseQueries";
+import { daysByMonth } from "../constants/Dates";
 import supabase from "../config/supabaseClient";
+
+const today = new Date();
+const currentMonthDays = daysByMonth[today.getMonth() + 1];
 
 const store = (set, get) => ({
 	totalTransactionCount: -1,
@@ -10,14 +14,31 @@ const store = (set, get) => ({
 		set({ totalTransactionCount: count });
 	},
 
-	dashboardTransactions: null,
-	setDashboardTransactions: (dashboardTransactions) => set(() => ({ dashboardTransactions })),
-	dashboardTransactionsLoading: true,
-	fetchDashboardTransactions: async () => {
-		set({ dashboardTransactionsLoading: true });
-		const data = await getDashboardTransactions();
-		set({ dashboardTransactions: data, dashboardTransactionsLoading: false });
+	transactions: null,
+	setTransactions: (transactions) => set(() => ({ transactions })),
+	transactionsLoading: true,
+	fetchTransactions: async () => {
+		set({ transactionsLoading: true });
+		const data = await getTransactions();
+		set({ transactions: data, transactionsLoading: false });
 	},
+
+	filters: [
+		{
+			type: "Date",
+			start: {
+				month: today.getMonth() + 1,
+				day: 1,
+				year: today.getFullYear(),
+			},
+			end: {
+				month: today.getMonth() + 1,
+				day: currentMonthDays[currentMonthDays.length - 1],
+				year: today.getFullYear(),
+			},
+		},
+	],
+	setFilters: (filters) => set(() => ({ filters })),
 
 	configurations: null,
 	setConfigurations: (configurations) => set(() => ({ configurations })),

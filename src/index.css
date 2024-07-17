@@ -22,7 +22,7 @@ body {
 @keyframes fadeInDown {
 	0% {
 		opacity: 0;
-		transform: translateY(-10px);
+		transform: translateY(-5px);
 	}
 	100% {
 		opacity: 1;
@@ -37,14 +37,14 @@ body {
 	}
 	100% {
 		opacity: 0;
-		transform: translateY(-10px);
+		transform: translateY(-5px);
 	}
 }
 
 @keyframes fadeInUp {
 	0% {
 		opacity: 0;
-		transform: translateY(10px);
+		transform: translateY(5px);
 	}
 	100% {
 		opacity: 1;
@@ -59,31 +59,41 @@ body {
 	}
 	100% {
 		opacity: 0;
-		transform: translateY(10px);
+		transform: translateY(5px);
 	}
 }
 
-.category-menu-down,
-.category-menu-up {
+.dropdown-down,
+.dropdown-up {
 	animation-fill-mode: forwards;
 }
 
-.category-menu-down.enter {
+.dropdown-down.enter {
 	animation-name: fadeInDown;
-	animation-duration: 0.2s;
+	animation-duration: 0.1s;
 }
 
-.category-menu-down.exit {
+.dropdown-down.exit {
 	animation-name: fadeOutUp;
-	animation-duration: 0.2s;
+	animation-duration: 0.1s;
 }
 
-.category-menu-up.enter {
+.dropdown-up.enter {
 	animation-name: fadeInUp;
-	animation-duration: 0.2s;
+	animation-duration: 0.1s;
 }
 
-.category-menu-up.exit {
+.dropdown-up.exit {
 	animation-name: fadeOutDown;
-	animation-duration: 0.2s;
+	animation-duration: 0.1s;
+}
+
+.upload-modal.enter {
+	animation-name: fadeInUp;
+	animation-duration: 0.1s;
+}
+
+.upload-modal.exit {
+	animation-name: fadeOutDown;
+	animation-duration: 0.1s;
 }

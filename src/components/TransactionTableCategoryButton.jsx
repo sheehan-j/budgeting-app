@@ -1,26 +1,35 @@
+import { useAnimationStore } from "../util/animationStore";
 import ButtonSpinner from "./ButtonSpinner";
 import PropTypes from "prop-types";
 
 const TransactionTableCategoryButton = ({
 	transaction,
-	visibleCategoryMenu,
-	animatingCategoryMenu,
+	tableRef,
 	categories,
 	categoriesLoading,
-	menuDirectionDown,
-	openCategoryMenu,
 	editTransactionCategory,
 	categoryUpdateLoading,
 }) => {
+	const { visibleCategoryMenu, animatingCategoryMenu, menuDirectionDown, openCategoryMenu, closeCategoryMenu } =
+		useAnimationStore((state) => ({
+			visibleCategoryMenu: state.visibleCategoryMenu,
+			animatingCategoryMenu: state.animatingCategoryMenu,
+			menuDirectionDown: state.categoryMenuDirectionDown,
+			openCategoryMenu: state.openCategoryMenu,
+			closeCategoryMenu: state.closeCategoryMenu,
+		}));
+
 	return (
 		<>
 			<button
 				ref={(ref) => {
 					transaction.buttonRef = ref;
 				}}
-				onClick={() => {
-					openCategoryMenu(transaction.id, transaction.buttonRef);
-				}}
+				onClick={
+					visibleCategoryMenu === transaction.id
+						? closeCategoryMenu
+						: () => openCategoryMenu(transaction.id, transaction.buttonRef, tableRef)
+				}
 				className="category-button inline-block bg-red-100 px-1.5 py-0.5 border border-red-200 rounded"
 				// Apply color styles set inside the DB
 				style={{
@@ -42,8 +51,8 @@ const TransactionTableCategoryButton = ({
 							: ""
 					} ${
 						// Check if the menu should be below or above the button, based on available space
-						menuDirectionDown ? "category-menu-down top-[130%]" : "category-menu-up bottom-[130%]"
-					} absolute bg-white border border-slate-300 rounded-lg z-10 px-2 py-1.5`}
+						menuDirectionDown ? "dropdown-down top-[130%]" : "dropdown-up bottom-[130%]"
+					} absolute bg-white border border-slate-300 rounded-lg drop-shadow-sm z-10 px-2 py-1.5`}
 				>
 					<div className="font-semibold text-slate-600 mb-1">Edit Category</div>
 					{/** Map each category to be displayed in the dropdown menu */}
@@ -77,12 +86,9 @@ const TransactionTableCategoryButton = ({
 
 TransactionTableCategoryButton.propTypes = {
 	transaction: PropTypes.object,
-	visibleCategoryMenu: PropTypes.number,
-	animatingCategoryMenu: PropTypes.number,
+	tableRef: PropTypes.object,
 	categories: PropTypes.array,
 	categoriesLoading: PropTypes.bool,
-	menuDirectionDown: PropTypes.bool,
-	openCategoryMenu: PropTypes.func,
 	editTransactionCategory: PropTypes.func,
 	categoryUpdateLoading: PropTypes.bool,
 };

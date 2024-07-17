@@ -9,21 +9,15 @@ import ButtonSpinner from "../components/ButtonSpinner";
 const Transactions = () => {
 	const [selectedConfigurationName, setselectedConfigurationName] = useState("");
 	const [selectedFile, setSelectedFile] = useState(null);
-	const {
-		configurations,
-		fetchConfigurations,
-		setNotification,
-		fetchDashboardTransactions,
-		fetchDashboardStats,
-		session,
-	} = useDataStore((state) => ({
-		configurations: state.configurations,
-		fetchConfigurations: state.fetchConfigurations,
-		setNotification: state.setNotification,
-		fetchDashboardTransactions: state.fetchDashboardTransactions,
-		fetchDashboardStats: state.fetchDashboardStats,
-		session: state.session,
-	}));
+	const { configurations, fetchConfigurations, setNotification, fetchTransactions, fetchDashboardStats, session } =
+		useDataStore((state) => ({
+			configurations: state.configurations,
+			fetchConfigurations: state.fetchConfigurations,
+			setNotification: state.setNotification,
+			fetchTransactions: state.fetchTransactions,
+			fetchDashboardStats: state.fetchDashboardStats,
+			session: state.session,
+		}));
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -61,7 +55,7 @@ const Transactions = () => {
 					session.user.id
 				);
 				await insertTransactions(transactions);
-				await fetchDashboardTransactions();
+				await fetchTransactions();
 				await fetchDashboardStats();
 			} catch (error) {
 				setNotification({ message: error.message, type: "error" });

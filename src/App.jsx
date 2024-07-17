@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDataStore } from "./util/dataStore";
+import { useAnimationStore } from "./util/animationStore";
 import Dashboard from "./screens/Dashboard";
 import Transactions from "./screens/Transactions";
 import Configurations from "./screens/Configurations";
@@ -15,6 +16,14 @@ const App = () => {
 		totalTransactionCount: state.totalTransactionCount,
 		fetchTotalTransactionCount: state.fetchTotalTransactionCount,
 	}));
+	const { filterMenuVisible, closeFilterMenu, visibleCategoryMenu, closeCategoryMenu } = useAnimationStore(
+		(state) => ({
+			filterMenuVisible: state.filterMenuVisible,
+			closeFilterMenu: state.closeFilterMenu,
+			visibleCategoryMenu: state.visibleCategoryMenu,
+			closeCategoryMenu: state.closeCategoryMenu,
+		})
+	);
 	const [loading, setLoading] = useState(true);
 
 	const loadData = async () => {
@@ -55,6 +64,26 @@ const App = () => {
 
 		return () => subscription.unsubscribe();
 	}, []);
+
+	window.onclick = (event) => {
+		const categoryMenuClassNames = [".category-button", ".category-menu"];
+		if (
+			!categoryMenuClassNames.some((className) => event.target.matches(className)) &&
+			visibleCategoryMenu !== null
+		) {
+			closeCategoryMenu();
+		}
+
+		const addFilterMenuClassNames = [
+			".add-filter-button",
+			".add-filter-menu",
+			".add-filter-option",
+			".add-filter-header",
+		];
+		if (!addFilterMenuClassNames.some((className) => event.target.matches(className)) && filterMenuVisible) {
+			closeFilterMenu();
+		}
+	};
 
 	if (loading) return null;
 
