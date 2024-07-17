@@ -45,6 +45,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 	const [page, setPage] = useState(0);
 	const pageSize = 20;
 
+	// Reapply filters and sorting to local transactions whenver transactions from the store change
 	useEffect(() => {
 		if (transactions) {
 			let newTransactions = [...transactions];
@@ -53,6 +54,20 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 			setLocalTransactions(newTransactions);
 		}
 	}, [filters, dashboardSortState, transactions]);
+
+	// Whenever a filter is applied, reset to the first page
+	useEffect(() => {
+		setPage(0);
+	}, [filters]);
+
+	// Resize the height of the filter menu on window resize
+	useLayoutEffect(() => {
+		if (showFilters) {
+			filtersRef.current.style.maxHeight = `${filtersRef.current.scrollHeight}px`;
+		} else {
+			filtersRef.current.style.maxHeight = "0";
+		}
+	}, [showFilters, filters]);
 
 	const editTransactionCategory = async (transaction, categoryName) => {
 		if (categoryUpdateLoading) return;
@@ -92,15 +107,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 
 		setDashboardSortState(newDashboardSortState);
 	};
-
-	useLayoutEffect(() => {
-		if (showFilters) {
-			filtersRef.current.style.maxHeight = `${filtersRef.current.scrollHeight}px`;
-		} else {
-			filtersRef.current.style.maxHeight = "0";
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [showFilters, filters]);
 
 	return (
 		<div ref={tableRef} className="w-full grow flex flex-col bg-white border border-slate-300 rounded-2xl">
@@ -143,11 +149,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 									{filter.type === "Category" && (
 										<span
 											className="text-slate-600 px-1.5 rounded"
-											style={{
-												backgroundColor: filter.category.color,
-												// 	borderWidth: "1px",
-												// 	borderColor: filter.category.colorDark,
-											}}
+											style={{ backgroundColor: filter.category.colorß }}
 										>
 											{filter.category.name}
 										</span>
