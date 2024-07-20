@@ -1,9 +1,11 @@
 import { useDataStore } from "../util/dataStore";
+import { defaultFilter } from "../constants/Filters";
 
 const DashboardStats = () => {
-	const { dashboardStats, dashboardStatsLoading } = useDataStore((state) => ({
+	const { dashboardStats, dashboardStatsLoading, filters } = useDataStore((state) => ({
 		dashboardStats: state.dashboardStats,
 		dashboardStatsLoading: state.dashboardStatsLoading,
+		filters: state.filters,
 	}));
 
 	return (
@@ -11,7 +13,16 @@ const DashboardStats = () => {
 			<div className="py-6 pl-6 pr-12 flex flex-col justify-end bg-white border border-slate-300 rounded-2xl">
 				{!dashboardStatsLoading && dashboardStats && (
 					<>
-						<div className="text-sm text-slate-700 font-semibold">{dashboardStats?.spending?.title}</div>
+						{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
+							<div className="text-sm text-slate-700 font-semibold">
+								{dashboardStats?.spending?.title}
+							</div>
+						) : (
+							<div className="text-sm text-slate-700 font-semibold">
+								Spending
+								<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
+							</div>
+						)}
 						<div className="text-4xl font-bold text-cGreen-dark">{dashboardStats?.spending?.amount}</div>
 					</>
 				)}
@@ -47,7 +58,12 @@ const DashboardStats = () => {
 				)}
 				{!dashboardStatsLoading && (
 					<>
-						<div className="text-lg font-semibold mb-1">Top Categories</div>
+						<div className="text-lg font-semibold mb-1">
+							Top Categories{" "}
+							{JSON.stringify(filters) !== JSON.stringify([{ ...defaultFilter }]) && (
+								<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
+							)}
+						</div>
 						<div className="flex flex-col gap-2">
 							{dashboardStats?.topCategories?.map((category) => (
 								<div key={category.name} className="flex flex-col gap-1.5">

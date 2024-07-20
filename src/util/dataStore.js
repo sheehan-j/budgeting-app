@@ -1,11 +1,10 @@
 import { create } from "zustand";
 import { getTransactions, getConfigurations, getCategories, getBudgets } from "./supabaseQueries";
 import { getDashboardStats } from "./statsUtil";
-import { daysByMonth } from "../constants/Dates";
+import { defaultFilter } from "../constants/Filters";
 import supabase from "../config/supabaseClient";
 
 const today = new Date();
-const currentMonthDays = daysByMonth[today.getMonth() + 1];
 
 const store = (set, get) => ({
 	totalTransactionCount: -1,
@@ -19,27 +18,19 @@ const store = (set, get) => ({
 	setTransactions: (transactions) => set(() => ({ transactions })),
 	transactionsLoading: true,
 	fetchTransactions: async () => {
+		const { fetchDashboardStats } = get();
 		set({ transactionsLoading: true });
 		const data = await getTransactions();
 		set({ transactions: data, transactionsLoading: false });
+		fetchDashboardStats();
 	},
 
-	filters: [
-		{
-			type: "Date",
-			start: {
-				month: today.getMonth() + 1,
-				day: 1,
-				year: today.getFullYear(),
-			},
-			end: {
-				month: today.getMonth() + 1,
-				day: currentMonthDays[currentMonthDays.length - 1],
-				year: today.getFullYear(),
-			},
-		},
-	],
-	setFilters: (filters) => set(() => ({ filters })),
+	filters: [{ ...defaultFilter }],
+	setFilters: (filters) => {
+		const { fetchDashboardStats } = get();
+		set(() => ({ filters }));
+		fetchDashboardStats();
+	},
 
 	configurations: null,
 	setConfigurations: (configurations) => set(() => ({ configurations })),
@@ -69,9 +60,10 @@ const store = (set, get) => ({
 	setDashboardStats: (dashboardStats) => set(() => ({ dashboardStats })),
 	dashboardStatsLoading: true,
 	fetchDashboardStats: async () => {
-		const { dashboardStats } = get();
-		if (dashboardStats === null) set({ dashboardStatsLoading: true });
-		const data = await getDashboardStats();
+		const { transactions, filters } = get();
+		if (transactions === null || filters === null) return;
+		set({ dashboardStatsLoading: true });
+		const data = await getDashboardStats(transactions, filters);
 		set({ dashboardStats: data, dashboardStatsLoading: false });
 	},
 	dashboardSortState: null,

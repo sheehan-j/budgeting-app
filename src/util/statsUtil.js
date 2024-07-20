@@ -1,8 +1,9 @@
-import { getCategories, getTransactionsByMonth } from "./supabaseQueries";
+import { getCategories } from "./supabaseQueries";
+import { filterTransactions } from "./filterUtil";
 
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (transactions, filters) => {
 	const today = new Date();
-	const transactions = await getTransactionsByMonth(today);
+	transactions = filterTransactions(transactions, filters);
 	const categories = await getCategories();
 
 	// TODO: Add a check here to not add ignored transactions to the total

@@ -16,6 +16,7 @@ const Dashboard = () => {
 		fetchCategories,
 		dashboardStats,
 		fetchDashboardStats,
+		filters,
 	} = useDataStore((state) => ({
 		transactions: state.transactions,
 		setTransactions: state.setTransactions,
@@ -25,6 +26,7 @@ const Dashboard = () => {
 		fetchCategories: state.fetchCategories,
 		dashboardStats: state.dashboardStats,
 		fetchDashboardStats: state.fetchDashboardStats,
+		filters: state.filters,
 	}));
 	const [uploadModalVisible, setUploadModalVisible] = useState(false);
 	const [uploadModalAnimating, setUploadModalAnimating] = useState(false);
@@ -50,7 +52,7 @@ const Dashboard = () => {
 		if (categories === null) fetchCategories();
 		if (dashboardStats === null) fetchDashboardStats();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [transactions, filters]);
 
 	return (
 		<div className="w-screen h-screen flex overflow-hidden relative">

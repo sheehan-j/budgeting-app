@@ -97,13 +97,13 @@ const FilterButtons = () => {
 	};
 
 	return (
-		<div className="flex gap-1.5">
-			<div className="relative">
+		<div className="add-filter-button flex gap-1.5">
+			<div className="add-filter-button relative">
 				<button
 					onClick={filterMenuVisible ? closeFilterMenu : openFilterMenu}
 					className="add-filter-button font-normal text-slate-600 bg-cGreen-light hover:bg-cGreen-lightHover border border-slate-300 rounded text-sm py-2 px-2"
 				>
-					<div className="w-[1.25rem]" style={{ padding: "0.2rem" }}>
+					<div className="add-filter-button w-[1.25rem]" style={{ padding: "0.2rem" }}>
 						<img src="./plus_dark_slate.svg" className="add-filter-button" />
 					</div>
 				</button>
