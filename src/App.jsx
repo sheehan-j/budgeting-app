@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDataStore } from "./util/dataStore";
 import { useAnimationStore } from "./util/animationStore";
 import Dashboard from "./screens/Dashboard";
-import Transactions from "./screens/Transactions";
+import Budgets from "./screens/Budgets";
 import Configurations from "./screens/Configurations";
 import Login from "./screens/Login";
 import supabase from "./config/supabaseClient";
@@ -94,7 +94,7 @@ const App = () => {
 					<>
 						<Route path="/*" element={<Dashboard />} />
 						<Route path="/configurations" element={<Configurations />} />
-						<Route path="/transactions" element={<Transactions />} />
+						<Route path="/budgets" element={<Budgets />} />
 					</>
 				) : (
 					<>

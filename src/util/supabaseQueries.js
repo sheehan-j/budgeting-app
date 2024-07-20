@@ -1,4 +1,5 @@
 import supabase from "../config/supabaseClient";
+import { getCategoricalSpending } from "./statsUtil";
 
 export const getTransactions = async () => {
 	let { data, error } = await supabase.from("transactions").select("*");
@@ -7,13 +8,31 @@ export const getTransactions = async () => {
 		return [];
 	}
 
-	data = data.map((transaction) => {
+	return formatTransactions(data);
+};
+
+export const getTransactionsByMonth = async (dateObj) => {
+	let { data, error } = await supabase
+		.from("transactions")
+		.select("*")
+		.eq("month", dateObj.getMonth() + 1)
+		.eq("year", dateObj.getFullYear());
+	if (error) {
+		alert("Could not fetch dashboard statistics");
+		return [];
+	}
+
+	return formatTransactions(data);
+};
+
+const formatTransactions = (transactions) => {
+	transactions = transactions.map((transaction) => {
 		transaction.date = new Date(transaction.date).toLocaleDateString("en-US");
-		transaction.amount = transaction.amount.toFixed(2);
+		// transaction.amount = transaction.amount.toFixed(2);
 		return transaction;
 	});
 
-	data.sort((a, b) => {
+	transactions.sort((a, b) => {
 		const dateA = new Date(a.date);
 		const dateB = new Date(b.date);
 
@@ -22,7 +41,7 @@ export const getTransactions = async () => {
 		return a.merchant.localeCompare(b.merchant);
 	});
 
-	return data.slice(0, 30);
+	return transactions;
 };
 
 export const insertTransactions = async (transactions) => {
@@ -34,7 +53,7 @@ export const getConfigurations = async () => {
 	let { data, error } = await supabase.from("configurations").select("*");
 	if (error) {
 		alert("Could not fetch configurations");
-		return;
+		return [];
 	}
 
 	data.sort((a, b) => a.name.localeCompare(b.name));
@@ -45,74 +64,86 @@ export const getCategories = async () => {
 	let { data, error } = await supabase.from("categories").select("*");
 	if (error) {
 		alert("Could not fetch categories");
-		return;
+		return [];
 	}
 
 	data.sort((a, b) => a.orderIndex - b.orderIndex);
 	return data;
 };
 
-export const getDashboardStats = async () => {
-	const today = new Date();
-	let { data, error } = await supabase
-		.from("transactions")
-		.select("*")
-		.eq("month", today.getMonth() + 1);
+export const getBudgets = async (date) => {
+	let { data, error } = await supabase.from("categories").select("*, budgets(*)");
 	if (error) {
-		alert("Could not fetch dashboard statistics");
-		return;
+		alert("Could not fetch budgets");
+		return [];
 	}
+	const transactions = await getTransactionsByMonth(date);
+	const categoricalSpending = getCategoricalSpending(transactions);
 
-	const categories = await getCategories();
+	let totalLimit = 0;
+	let totalSpending = 0;
+	let budgets = data.map((budget) => {
+		const newBudget = { ...budget };
+		// Deconstruct the budget fields if one is returned
+		newBudget.limit = newBudget.budgets.length > 0 ? newBudget.budgets[0].limit : null;
+		newBudget.spending = categoricalSpending[newBudget.name] || 0;
+		newBudget.percentage = newBudget.limit ? (newBudget.spending / newBudget.limit) * 100 : null;
 
-	// TODO: Add a check here to not add ignored transactions to the total
+		// Calculate the total limit and spending
+		if (newBudget.limit) totalLimit += newBudget.limit;
+		totalSpending += newBudget.spending;
 
-	const spendingAmount = data.reduce((acc, transaction) => {
-		if (transaction.amount > 0) acc += transaction.amount;
-		return acc;
-	}, 0);
+		// Remove the budgets fields after deconstructing
+		delete newBudget.budgets;
+		return newBudget;
+	});
 
-	const categoricalSpending = {};
-	data.forEach((transaction) => {
-		if (transaction.amount < 0) return;
+	// Sort the budgets by the orderIndex that is returned as part of the category table
+	budgets.sort((a, b) => a.orderIndex - b.orderIndex);
 
-		if (categoricalSpending[transaction.categoryName]) {
-			categoricalSpending[transaction.categoryName] += transaction.amount;
+	// Add the "total" to the list
+	const totalBudget = {
+		name: "Total",
+		limit: totalLimit > 0 ? totalLimit : null,
+		spending: totalSpending,
+		percentage: totalLimit > 0 ? (totalSpending / totalLimit) * 100 : null,
+		// color: "rgb(241 245 249)",
+		color: "white",
+		colorDark: "rgb(226 232 240)",
+		colorLight: "rgb(248 250 252)",
+	};
+	budgets = [totalBudget, ...budgets];
+
+	return budgets;
+};
+
+export const updateBudget = async (newBudgets, userId) => {
+	const updates = [];
+	const deletes = [];
+
+	newBudgets.forEach((budget) => {
+		if (budget.name === "Total") return;
+
+		if (budget.limit) {
+			updates.push({ categoryName: budget.name, limit: budget.limit, userId });
 		} else {
-			categoricalSpending[transaction.categoryName] = transaction.amount;
+			deletes.push(budget.name);
 		}
 	});
 
-	const sortedCategories = Object.entries(categoricalSpending).sort((a, b) => b[1] - a[1]);
-	let topCategories = sortedCategories.slice(0, 3).map(([categoryName, amount]) => {
-		const categoryData = categories.find((category) => category.name === categoryName);
-		return {
-			name: categoryName,
-			amount,
-			color: categoryData.color,
-			colorDark: categoryData.colorDark,
-			percentage: (amount / spendingAmount) * 100,
-		};
-	});
-
-	if (topCategories.length === 0) {
-		const uncategorizedCategory = categories.find((category) => category.name === "Uncategorized");
-		topCategories = [
-			{
-				name: "None",
-				amount: 0,
-				color: uncategorizedCategory.color,
-				colorDark: uncategorizedCategory.colorDark,
-				percentage: 0,
-			},
-		];
+	if (updates.length > 0) {
+		const { error } = await supabase.from("budgets").upsert(updates);
+		if (error) {
+			alert("Could not update budgets");
+			return;
+		}
 	}
 
-	return {
-		spending: {
-			amount: spendingAmount.toFixed(2),
-			title: `${today.toLocaleString("default", { month: "long" })} Spending`,
-		},
-		topCategories,
-	};
+	if (deletes.length > 0) {
+		const { error } = await supabase.from("budgets").delete().in("categoryName", deletes).eq("userId", userId);
+		if (error) {
+			alert("Could not update budgets");
+			return;
+		}
+	}
 };

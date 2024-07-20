@@ -55,7 +55,7 @@ const Dashboard = () => {
 	return (
 		<div className="w-screen h-screen flex overflow-hidden relative">
 			<Navbar activePage={"Dashboard"} />
-			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-12 lg:p-28">
+			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-12 lg:p-32">
 				<DashboardStats />
 				<TransactionTable
 					transactions={transactions}

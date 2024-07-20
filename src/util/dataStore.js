@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { getTransactions, getConfigurations, getCategories, getDashboardStats } from "./supabaseQueries";
+import { getTransactions, getConfigurations, getCategories, getBudgets } from "./supabaseQueries";
+import { getDashboardStats } from "./statsUtil";
 import { daysByMonth } from "../constants/Dates";
 import supabase from "../config/supabaseClient";
 
@@ -75,6 +76,20 @@ const store = (set, get) => ({
 	},
 	dashboardSortState: null,
 	setDashboardSortState: (state) => set(() => ({ dashboardSortState: state })),
+
+	budgets: null,
+	setBudgets: (budgets) => set(() => ({ budgets })),
+	budgetsMonth: today.getMonth() + 1,
+	setBudgetsMonth: (month) => set(() => ({ budgetsMonth: month })),
+	budgetsYear: today.getFullYear(),
+	setBudgetsYear: (year) => set(() => ({ budgetsYear: year })),
+	budgetsLoading: true,
+	fetchBudgets: async () => {
+		const { budgets, budgetsMonth, budgetsYear } = get();
+		if (budgets === null) set({ budgetsLoading: true });
+		const data = await getBudgets(new Date(`${budgetsYear}-${budgetsMonth}-01`));
+		set({ budgets: data, budgetsLoading: false });
+	},
 });
 
 export const useDataStore = create(store);

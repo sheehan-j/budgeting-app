@@ -21,6 +21,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 		setDashboardSortState,
 		filters,
 		setFilters,
+		fetchBudgets,
 	} = useDataStore((state) => ({
 		categories: state.categories,
 		categoriesLoading: state.categoriesLoading,
@@ -31,6 +32,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 		totalTransactionCount: state.totalTransactionCount,
 		filters: state.filters,
 		setFilters: state.setFilters,
+		fetchBudgets: state.fetchBudgets,
 	}));
 	const { openUploadModal, closeCategoryMenu } = useAnimationStore((state) => ({
 		openUploadModal: state.openUploadModal,
@@ -94,6 +96,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 		closeCategoryMenu();
 		setCategoryUpdateLoading(false);
 		fetchDashboardStats();
+		fetchBudgets();
 	};
 
 	const onSorterClick = (column) => {
@@ -239,10 +242,10 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 									<div className="w-[20%] pr-4">{transaction.configurationName}</div>
 									<div
 										className={`${
-											transaction.amount.includes("-") ? "text-cGreen-dark" : ""
+											transaction.amount.toFixed(2).includes("-") ? "text-cGreen-dark" : ""
 										} w-[12%]`}
 									>
-										{transaction.amount}
+										{transaction.amount.toFixed(2)}
 									</div>
 								</div>
 							))}
@@ -269,7 +272,7 @@ TransactionTable.propTypes = {
 			id: PropTypes.number.isRequired,
 			date: PropTypes.string.isRequired,
 			merchant: PropTypes.string.isRequired,
-			amount: PropTypes.string.isRequired,
+			amount: PropTypes.number.isRequired,
 		})
 	),
 	setTransactions: PropTypes.func,

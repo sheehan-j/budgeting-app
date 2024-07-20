@@ -60,7 +60,7 @@ const DashboardStats = () => {
 									<div
 										className="h-2 w-full rounded-3xl overflow-hidden"
 										style={{
-											backgroundColor: category.color,
+											backgroundColor: category.colorLight,
 											borderWidth: "1px",
 											borderColor: category.colorDark,
 										}}
