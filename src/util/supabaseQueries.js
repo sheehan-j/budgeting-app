@@ -49,6 +49,24 @@ export const insertTransactions = async (transactions) => {
 	if (error) throw error;
 };
 
+export const setTransactionIgnored = async (transactionId, ignored) => {
+	const { error } = await supabase.from("transactions").update({ ignored }).eq("id", transactionId);
+	if (error) {
+		alert("Could not update transaction.");
+		return false;
+	}
+	return true;
+};
+
+export const deleteTransaction = async (transactionId) => {
+	const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
+	if (error) {
+		alert("Could not delete transaction.");
+		return false;
+	}
+	return true;
+};
+
 export const getConfigurations = async () => {
 	let { data, error } = await supabase.from("configurations").select("*");
 	if (error) {

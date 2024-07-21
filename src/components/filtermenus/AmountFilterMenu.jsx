@@ -1,11 +1,14 @@
 import PropTypes from "prop-types";
 import { useDataStore } from "../../util/dataStore";
+import { getDashboardStats } from "../../util/statsUtil";
 
 const AmountFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => {
-	const { filters, setFilters, setNotification } = useDataStore((state) => ({
+	const { transactions, filters, setFilters, setNotification, setDashboardStats } = useDataStore((state) => ({
+		transactions: state.transactions,
 		filters: state.filters,
 		setFilters: state.setFilters,
 		setNotification: state.setNotification,
+		setDashboardStats: state.setDashboardStats,
 	}));
 
 	return (
@@ -35,7 +38,7 @@ const AmountFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) =
 				/>
 			</div>
 			<button
-				onClick={() => {
+				onClick={async () => {
 					// Check if the amount is empty
 					if (selectedFilterOptions.amount === "") {
 						setNotification({ message: "Amount cannot be empty.", type: "error" });
@@ -65,7 +68,9 @@ const AmountFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) =
 					) {
 						return;
 					}
+					const newFilters = [...filters, tempSelectedFilterOptions];
 					setFilters([...filters, tempSelectedFilterOptions]);
+					setDashboardStats(await getDashboardStats(transactions, newFilters));
 				}}
 				className="add-filter-option text-xs hover:bg-slate-50 border border-slate-200 rounded w-full py-0.5"
 			>

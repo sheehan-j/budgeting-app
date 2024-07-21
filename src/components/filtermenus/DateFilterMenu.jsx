@@ -1,9 +1,15 @@
 import PropTypes from "prop-types";
 import { daysByMonth } from "../../constants/Dates";
 import { useDataStore } from "../../util/dataStore";
+import { getDashboardStats } from "../../util/statsUtil";
 
 const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => {
-	const { filters, setFilters } = useDataStore((state) => ({ filters: state.filters, setFilters: state.setFilters }));
+	const { transactions, filters, setFilters, setDashboardStats } = useDataStore((state) => ({
+		transactions: state.transactions,
+		filters: state.filters,
+		setFilters: state.setFilters,
+		setDashboardStats: state.setDashboardStats,
+	}));
 
 	return (
 		<div className="add-filter-option flex flex-col justify-between grow px-2.5 pb-2">
@@ -114,7 +120,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 				</div>
 			</div>
 			<button
-				onClick={() => {
+				onClick={async () => {
 					const tempSelectedFilterOptions = { ...selectedFilterOptions };
 					setSelectedFilterOptions(null);
 
@@ -132,7 +138,9 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 					) {
 						return;
 					}
+					const newFilters = [...filters, tempSelectedFilterOptions];
 					setFilters([...filters, tempSelectedFilterOptions]);
+					setDashboardStats(await getDashboardStats(transactions, newFilters));
 				}}
 				className="add-filter-option text-xs hover:bg-slate-50 border border-slate-200 rounded w-full py-0.5"
 			>

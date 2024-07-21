@@ -7,6 +7,7 @@ import AmountFilterMenu from "./filtermenus/AmountFilterMenu";
 import MerchantFilterMenu from "./filtermenus/MerchantFilterMenu";
 import ConfigurationFilterMenu from "./filtermenus/ConfigurationFilterMenu";
 import CategoryFilterMenu from "./filtermenus/CategoryFilterMenu";
+import { defaultFilter } from "../constants/Filters";
 
 const FilterButtons = () => {
 	const { filterMenuVisible, filterMenuAnimating, openFilterMenu, closeFilterMenu } = useAnimationStore((state) => ({
@@ -15,7 +16,8 @@ const FilterButtons = () => {
 		openFilterMenu: state.openFilterMenu,
 		closeFilterMenu: state.closeFilterMenu,
 	}));
-	const { setFilters } = useDataStore((state) => ({
+	const { filters, setFilters } = useDataStore((state) => ({
+		filters: state.filters,
 		setFilters: state.setFilters,
 	}));
 	const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
@@ -77,6 +79,8 @@ const FilterButtons = () => {
 	};
 
 	const resetFilters = () => {
+		if (JSON.stringify(filters) === JSON.stringify([defaultFilter])) return;
+
 		const today = new Date();
 		const currentMonthDays = daysByMonth[today.getMonth() + 1];
 		setFilters([

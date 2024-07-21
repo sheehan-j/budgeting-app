@@ -91,9 +91,9 @@ const UploadModal = () => {
 						className="w-1/3 flex flex-col gap-2 bg-white rounded-xl border border-slate-200 p-3"
 					>
 						<div className="flex bg-slate-50 w-full justify-between items-center px-3 py-2.5 rounded-lg border border-slate-200">
-							<div className="text-lg text-slate-600 font-semibold">Upload Transactions</div>
+							<div className="text-base text-slate-600 font-semibold">Upload Transactions</div>
 							<button onClick={closeUploadModal}>
-								<img src="./close.svg" alt="close" className="w-4" onClick={closeUploadModal} />
+								<img src="./close.svg" alt="close" className="w-3" onClick={closeUploadModal} />
 							</button>
 						</div>
 						<div className="flex flex-col gap-3 bg-white w-full justify-between items-center rounded-lg p-3">

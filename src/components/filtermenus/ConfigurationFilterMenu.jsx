@@ -1,11 +1,13 @@
 import PropTypes from "prop-types";
 import { useDataStore } from "../../util/dataStore";
+import { getDashboardStats } from "../../util/statsUtil";
 
 const ConfigurationFilterMenu = ({ setSelectedFilterOptions }) => {
-	const { transactions, filters, setFilters } = useDataStore((state) => ({
+	const { transactions, filters, setFilters, setDashboardStats } = useDataStore((state) => ({
 		transactions: state.transactions,
 		filters: state.filters,
 		setFilters: state.setFilters,
+		setDashboardStats: state.setDashboardStats,
 	}));
 
 	return (
@@ -14,7 +16,7 @@ const ConfigurationFilterMenu = ({ setSelectedFilterOptions }) => {
 				<button
 					key={configuration}
 					className="add-filter-option text-sm text-start hover:bg-slate-50 px-2.5 py-0.5 "
-					onClick={() => {
+					onClick={async () => {
 						setSelectedFilterOptions(null);
 						if (
 							filters.some(
@@ -23,7 +25,9 @@ const ConfigurationFilterMenu = ({ setSelectedFilterOptions }) => {
 						) {
 							return;
 						}
-						setFilters([...filters, { type: "Configuration", configuration: configuration }]);
+						const newFilters = [...filters, { type: "Configuration", configuration: configuration }];
+						setFilters(newFilters);
+						setDashboardStats(await getDashboardStats(transactions, newFilters));
 					}}
 				>
 					{configuration}

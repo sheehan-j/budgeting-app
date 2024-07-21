@@ -27,9 +27,9 @@ const store = (set, get) => ({
 
 	filters: [{ ...defaultFilter }],
 	setFilters: (filters) => {
-		const { fetchDashboardStats } = get();
+		// const { fetchDashboardStats } = get();
 		set(() => ({ filters }));
-		fetchDashboardStats();
+		// fetchDashboardStats();
 	},
 
 	configurations: null,

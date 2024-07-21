@@ -26,11 +26,15 @@ const TransactionTableCategoryButton = ({
 					transaction.buttonRef = ref;
 				}}
 				onClick={
-					visibleCategoryMenu === transaction.id
+					transaction.ignored
+						? () => {} // If the transaction is ignored, do nothing
+						: visibleCategoryMenu === transaction.id
 						? closeCategoryMenu
 						: () => openCategoryMenu(transaction.id, transaction.buttonRef, tableRef)
 				}
-				className="category-button inline-block bg-red-100 px-1.5 py-0.5 border border-red-200 rounded"
+				className={`${
+					transaction.ignored ? "hover:cursor-default" : ""
+				} category-button inline-block bg-red-100 px-1.5 py-0.5 border border-red-200 rounded`}
 				// Apply color styles set inside the DB
 				style={{
 					backgroundColor: categories?.find((category) => category.name === transaction.categoryName).color,

@@ -16,14 +16,21 @@ const App = () => {
 		totalTransactionCount: state.totalTransactionCount,
 		fetchTotalTransactionCount: state.fetchTotalTransactionCount,
 	}));
-	const { filterMenuVisible, closeFilterMenu, visibleCategoryMenu, closeCategoryMenu } = useAnimationStore(
-		(state) => ({
-			filterMenuVisible: state.filterMenuVisible,
-			closeFilterMenu: state.closeFilterMenu,
-			visibleCategoryMenu: state.visibleCategoryMenu,
-			closeCategoryMenu: state.closeCategoryMenu,
-		})
-	);
+	const {
+		filterMenuVisible,
+		closeFilterMenu,
+		visibleCategoryMenu,
+		closeCategoryMenu,
+		visibleTransactionMenu,
+		closeTransactionMenu,
+	} = useAnimationStore((state) => ({
+		filterMenuVisible: state.filterMenuVisible,
+		closeFilterMenu: state.closeFilterMenu,
+		visibleCategoryMenu: state.visibleCategoryMenu,
+		closeCategoryMenu: state.closeCategoryMenu,
+		visibleTransactionMenu: state.visibleTransactionMenu,
+		closeTransactionMenu: state.closeTransactionMenu,
+	}));
 	const [loading, setLoading] = useState(true);
 
 	const loadData = async () => {
@@ -82,6 +89,14 @@ const App = () => {
 		];
 		if (!addFilterMenuClassNames.some((className) => event.target.matches(className)) && filterMenuVisible) {
 			closeFilterMenu();
+		}
+
+		const transactionMenuClassNames = [".transaction-menu-item", ".transaction-menu"];
+		if (
+			!transactionMenuClassNames.some((className) => event.target.matches(className)) &&
+			visibleTransactionMenu !== null
+		) {
+			closeTransactionMenu();
 		}
 	};
 

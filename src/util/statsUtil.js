@@ -9,7 +9,7 @@ export const getDashboardStats = async (transactions, filters) => {
 	// TODO: Add a check here to not add ignored transactions to the total
 
 	const spendingAmount = transactions.reduce((acc, transaction) => {
-		if (transaction.amount > 0) acc += transaction.amount;
+		if (transaction.amount > 0 && !transaction.ignored) acc += transaction.amount;
 		return acc;
 	}, 0);
 
@@ -41,7 +41,7 @@ export const getDashboardStats = async (transactions, filters) => {
 export const getCategoricalSpending = (transactions) => {
 	const categoricalSpending = {};
 	transactions.forEach((transaction) => {
-		if (transaction.amount < 0) return;
+		if (transaction.amount < 0 || transaction.ignored) return;
 
 		if (categoricalSpending[transaction.categoryName]) {
 			categoricalSpending[transaction.categoryName] += transaction.amount;

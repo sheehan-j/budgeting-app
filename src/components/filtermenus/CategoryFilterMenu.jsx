@@ -1,10 +1,13 @@
 import PropTypes from "prop-types";
 import { useDataStore } from "../../util/dataStore";
+import { getDashboardStats } from "../../util/statsUtil";
 
 const CategoryFilterMenu = ({ setSelectedFilterOptions }) => {
-	const { filters, setFilters, categories } = useDataStore((state) => ({
+	const { transactions, filters, setFilters, setDashboardStats, categories } = useDataStore((state) => ({
+		transactions: state.transactions,
 		filters: state.filters,
 		setFilters: state.setFilters,
+		setDashboardStats: state.setDashboardStats,
 		categories: state.categories,
 	}));
 
@@ -19,7 +22,7 @@ const CategoryFilterMenu = ({ setSelectedFilterOptions }) => {
 						borderWidth: "1px",
 						borderColor: category.colorDark,
 					}}
-					onClick={() => {
+					onClick={async () => {
 						setSelectedFilterOptions(null);
 						if (
 							filters.some(
@@ -28,7 +31,9 @@ const CategoryFilterMenu = ({ setSelectedFilterOptions }) => {
 						) {
 							return;
 						}
-						setFilters([...filters, { type: "Category", category: category }]);
+						const newFilters = [...filters, { type: "Category", category: category }];
+						setFilters(newFilters);
+						setDashboardStats(await getDashboardStats(transactions, newFilters));
 					}}
 				>
 					{category.name}

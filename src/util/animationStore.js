@@ -51,6 +51,27 @@ const store = (set, get) => ({
 		const { visibleCategoryMenu, setAnimatingCategoryMenu, setVisibleCategoryMenu } = get();
 		closeCategoryMenu(visibleCategoryMenu, setAnimatingCategoryMenu, setVisibleCategoryMenu);
 	},
+
+	visibleTransactionMenu: null,
+	animatingTransactionMenu: null,
+	setVisibleTransactionMenu: (value) => set({ visibleTransactionMenu: value }),
+	setAnimatingTransactionMenu: (value) => set({ animatingTransactionMenu: value }),
+	openTransactionMenu: (transactionId) => {
+		const { setAnimatingTransactionMenu, setVisibleTransactionMenu } = get();
+		setAnimatingTransactionMenu(transactionId);
+		setVisibleTransactionMenu(transactionId);
+		setTimeout(() => {
+			setAnimatingTransactionMenu(null);
+		}, 200);
+	},
+	closeTransactionMenu: () => {
+		const { visibleTransactionMenu, setAnimatingTransactionMenu, setVisibleTransactionMenu } = get();
+		setAnimatingTransactionMenu(visibleTransactionMenu);
+		setVisibleTransactionMenu(null);
+		setTimeout(() => {
+			setAnimatingTransactionMenu(null);
+		}, 200);
+	},
 });
 
 export const useAnimationStore = create(store);
