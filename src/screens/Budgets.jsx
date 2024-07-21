@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useDataStore } from "../util/dataStore";
 import { updateBudget } from "../util/supabaseQueries";
 import { monthsByNumber } from "../constants/Dates";
+import { nonEditableCategories, ignoredCategories } from "../constants/Categories";
 import Navbar from "../components/Navbar";
 import NotificationBanner from "../components/NotificationBanner";
 import ButtonSpinner from "../components/ButtonSpinner";
@@ -46,7 +47,7 @@ const Budgets = () => {
 
 	useEffect(() => {
 		fetchBudgets();
-	}, [budgetsMonth, budgetsYear]);
+	}, [budgetsMonth, budgetsYear, fetchBudgets]);
 
 	const onClickEdit = () => {
 		if (saving) return;
@@ -72,7 +73,7 @@ const Budgets = () => {
 	return (
 		<div className="w-screen h-screen flex overflow-hidden relative">
 			<Navbar activePage={"Budgets"} />
-			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-12 lg:p-32">
+			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-8 lg:p-12 xl:p-32">
 				<div className="w-full grow flex flex-col bg-white border border-slate-300 rounded-2xl py-4">
 					<div className="flex justify-between px-5 mb-3">
 						<div className="flex items-center">
@@ -151,14 +152,19 @@ const Budgets = () => {
 												<span className="text-slate-600 font-semibold">
 													{budget.spending.toFixed(2)}
 												</span>
-												{" spent out of "}
-												{(!editing || budget.name === "Total") && (
-													<span className="text-slate-600 font-semibold">
-														{budget.limit ? budget.limit.toFixed(2) : "--"}
-													</span>
+												{ignoredCategories.includes(budget.name) && " total"}
+												{!ignoredCategories.includes(budget.name) && (
+													<>
+														{" spent out of "}
+														{(!editing || nonEditableCategories.includes(budget.name)) && (
+															<span className="text-slate-600 font-semibold">
+																<>{budget.limit ? budget.limit.toFixed(2) : "--"}</>
+															</span>
+														)}
+													</>
 												)}
 											</span>
-											{editing && budget.name !== "Total" && (
+											{editing && !nonEditableCategories.includes(budget.name) && (
 												<input
 													className="border border-slate-200 w-28 text-right outline-none"
 													value={budget.limit || ""}

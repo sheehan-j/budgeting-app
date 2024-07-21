@@ -7,13 +7,17 @@ export const getDashboardStats = async (transactions, filters) => {
 	const categories = await getCategories();
 
 	// TODO: Add a check here to not add ignored transactions to the total
+	const ignoredCategories = ["Income", "Credits/Payments"];
 
 	const spendingAmount = transactions.reduce((acc, transaction) => {
-		if (transaction.amount > 0 && !transaction.ignored) acc += transaction.amount;
+		if (!ignoredCategories.includes(transaction.categoryName) && !transaction.ignored) acc += transaction.amount;
 		return acc;
 	}, 0);
 
 	const categoricalSpending = getCategoricalSpending(transactions);
+	ignoredCategories.forEach((category) => {
+		delete categoricalSpending[category];
+	});
 
 	// Sort and pull the top three categories
 	const sortedCategories = Object.entries(categoricalSpending).sort((a, b) => b[1] - a[1]);
@@ -41,7 +45,7 @@ export const getDashboardStats = async (transactions, filters) => {
 export const getCategoricalSpending = (transactions) => {
 	const categoricalSpending = {};
 	transactions.forEach((transaction) => {
-		if (transaction.amount < 0 || transaction.ignored) return;
+		if (transaction.ignored) return;
 
 		if (categoricalSpending[transaction.categoryName]) {
 			categoricalSpending[transaction.categoryName] += transaction.amount;

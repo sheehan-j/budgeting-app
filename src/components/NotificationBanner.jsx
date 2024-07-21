@@ -29,7 +29,7 @@ const NotificationBanner = () => {
 			{notification?.type === "success" && (
 				<div
 					style={{ ...styles.slide, top: visible ? "1rem" : "-5rem" }}
-					className="absolute z-[100] right-4 w-[20rem] border  bg-cGreen-lightTrans text-cGreen-dark border border-cGreen rounded-lg p-2 text-sm"
+					className="absolute z-[100] right-4 w-[20rem] border  bg-cGreen-lighter text-cGreen-dark border border-cGreen rounded-lg p-2 text-sm"
 				>
 					{notification.message}
 				</div>

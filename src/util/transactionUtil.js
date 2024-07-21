@@ -1,14 +1,21 @@
-export const parseCSV = (event, configuration, userId) => {
+import { getTransactions } from "./supabaseQueries";
+
+export const parseTransactionsFromCSV = (event, configuration, userId) => {
 	const fileContent = event.target.result;
 	const transactions = [];
 
 	const rows = fileContent.split("\n");
 	if (rows[rows.length - 1] === "") rows.pop();
-	rows.forEach((row) => {
+	rows.forEach((row, index) => {
 		row = row.replace(", ", ",");
 		const cells = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
 
-		const newTransaction = { userId, configurationName: configuration.name, categoryName: "Uncategorized" };
+		const newTransaction = {
+			userId,
+			configurationName: configuration.name,
+			categoryName: "Uncategorized",
+			tempInsertId: index, // Makes it easier to track which transactions are duplicates
+		};
 		cells.forEach((cell, index) => {
 			if (cell[0] == '"' && cell[cell.length - 1] == '"') cell = cell.substring(1, cell.length - 1);
 			cell = cell.trim();
@@ -47,7 +54,14 @@ export const parseCSV = (event, configuration, userId) => {
 					}
 				}
 
-				if (coefficient < 0) newTransaction.categoryName = "Credit/Income";
+				if (coefficient < 0) {
+					const payrollKeywords = ["ach", "payroll", "direct deposit", "salary"];
+					if (payrollKeywords.some((keyword) => cell.toLowerCase().includes(keyword))) {
+						newTransaction.categoryName = "Income";
+					} else {
+						newTransaction.categoryName = "Credits/Payments";
+					}
+				}
 				newTransaction.amount = parseFloat(parseFloat(cell) * coefficient);
 			} else if (index + 1 === configuration.dateColNum) {
 				const date = new Date(cell);
@@ -62,4 +76,24 @@ export const parseCSV = (event, configuration, userId) => {
 		transactions.push(newTransaction);
 	});
 	return transactions;
+};
+
+export const checkForDuplicateTransactions = async (transactions, configuration) => {
+	const existingTransactions = await getTransactions();
+	const duplicateTransactions = [];
+	transactions.forEach((transaction) => {
+		if (
+			existingTransactions.some(
+				(existingTransaction) =>
+					existingTransaction.merchant === transaction.merchant &&
+					existingTransaction.amount === transaction.amount &&
+					existingTransaction.date === transaction.date &&
+					existingTransaction.configurationName === configuration
+			)
+		) {
+			duplicateTransactions.push({ ...transaction, include: false });
+		}
+	});
+
+	return duplicateTransactions;
 };

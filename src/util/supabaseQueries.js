@@ -1,5 +1,6 @@
 import supabase from "../config/supabaseClient";
 import { getCategoricalSpending } from "./statsUtil";
+import { ignoredCategories } from "../constants/Categories";
 
 export const getTransactions = async () => {
 	let { data, error } = await supabase.from("transactions").select("*");
@@ -108,8 +109,10 @@ export const getBudgets = async (date) => {
 		newBudget.percentage = newBudget.limit ? (newBudget.spending / newBudget.limit) * 100 : null;
 
 		// Calculate the total limit and spending
-		if (newBudget.limit) totalLimit += newBudget.limit;
-		totalSpending += newBudget.spending;
+		if (!ignoredCategories.includes(newBudget.name)) {
+			if (newBudget.limit) totalLimit += newBudget.limit;
+			totalSpending += newBudget.spending;
+		}
 
 		// Remove the budgets fields after deconstructing
 		delete newBudget.budgets;

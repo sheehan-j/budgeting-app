@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-input {
+input[type="text"] {
 	@apply border border-slate-300 rounded px-1.5 py-1;
+}
+
+input[type="checkbox"] {
+	accent-color: rgb(167, 215, 159);
+	cursor: pointer;
+	/* background-color: rgb(221, 241, 217); */
 }
 
 body {

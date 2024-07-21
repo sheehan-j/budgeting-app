@@ -32,17 +32,17 @@ const DisabledConfigurationOptions = () => {
 					<div className="flex flex-col gap-4">
 						<div className="flex justify-between">
 							<label>{"Does your CSV have minus (-) symbols"}</label>
-							<input className="accent-cGreen-light text-white bg-white" type="checkbox" disabled />
+							<input type="checkbox" disabled />
 						</div>
 
 						<div className="flex justify-between">
 							<label>{"Does your CSV have plus (+) symbols?"}</label>
-							<input className="accent-cGreen-light text-white bg-white" type="checkbox" disabled />
+							<input type="checkbox" disabled />
 						</div>
 
 						<div className="flex justify-between">
 							<label>{"Does your CSV have transactions without symbols?"}</label>
-							<input className="accent-cGreen-light text-white bg-white" type="checkbox" disabled />
+							<input type="checkbox" disabled />
 						</div>
 					</div>
 				</div>
