@@ -21,7 +21,14 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 						onChange={(e) =>
 							setSelectedFilterOptions({
 								...selectedFilterOptions,
-								start: { ...selectedFilterOptions.start, month: e.target.value },
+								start: {
+									...selectedFilterOptions.start,
+									month: e.target.value,
+									day:
+										selectedFilterOptions.start.day > daysByMonth[e.target.value].length
+											? daysByMonth[e.target.value].length
+											: selectedFilterOptions.start.day,
+								},
 							})
 						}
 						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
@@ -74,7 +81,14 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 						onChange={(e) =>
 							setSelectedFilterOptions({
 								...selectedFilterOptions,
-								end: { ...selectedFilterOptions.end, month: e.target.value },
+								end: {
+									...selectedFilterOptions.end,
+									month: e.target.value,
+									day:
+										selectedFilterOptions.end.day > daysByMonth[e.target.value].length
+											? daysByMonth[e.target.value].length
+											: selectedFilterOptions.end.day,
+								},
 							})
 						}
 						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
