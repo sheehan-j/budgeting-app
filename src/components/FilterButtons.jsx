@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useAnimationStore } from "../util/animationStore";
 import { useDataStore } from "../util/dataStore";
 import { daysByMonth } from "../constants/Dates";
+import { defaultFilter } from "../constants/Filters";
+import { getDashboardStats } from "../util/statsUtil";
 import DateFilterMenu from "./filtermenus/DateFilterMenu";
 import AmountFilterMenu from "./filtermenus/AmountFilterMenu";
 import MerchantFilterMenu from "./filtermenus/MerchantFilterMenu";
 import ConfigurationFilterMenu from "./filtermenus/ConfigurationFilterMenu";
 import CategoryFilterMenu from "./filtermenus/CategoryFilterMenu";
-import { defaultFilter } from "../constants/Filters";
 
 const FilterButtons = () => {
 	const { filterMenuVisible, filterMenuAnimating, openFilterMenu, closeFilterMenu } = useAnimationStore((state) => ({
@@ -16,9 +17,11 @@ const FilterButtons = () => {
 		openFilterMenu: state.openFilterMenu,
 		closeFilterMenu: state.closeFilterMenu,
 	}));
-	const { filters, setFilters } = useDataStore((state) => ({
+	const { transactions, filters, setFilters, setDashboardStats } = useDataStore((state) => ({
+		transactions: state.transactions,
 		filters: state.filters,
 		setFilters: state.setFilters,
+		setDashboardStats: state.setDashboardStats,
 	}));
 	const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
@@ -78,26 +81,11 @@ const FilterButtons = () => {
 		Amount: setAmountSelectedFilterOption,
 	};
 
-	const resetFilters = () => {
+	const resetFilters = async () => {
 		if (JSON.stringify(filters) === JSON.stringify([defaultFilter])) return;
 
-		const today = new Date();
-		const currentMonthDays = daysByMonth[today.getMonth() + 1];
-		setFilters([
-			{
-				type: "Date",
-				start: {
-					month: today.getMonth() + 1,
-					day: 1,
-					year: today.getFullYear(),
-				},
-				end: {
-					month: today.getMonth() + 1,
-					day: currentMonthDays[currentMonthDays.length - 1],
-					year: today.getFullYear(),
-				},
-			},
-		]);
+		setFilters([defaultFilter]);
+		setDashboardStats(await getDashboardStats(transactions, [defaultFilter]));
 	};
 
 	return (

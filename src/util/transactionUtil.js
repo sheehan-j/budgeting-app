@@ -6,6 +6,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 
 	const rows = fileContent.split("\n");
 	if (rows[rows.length - 1] === "") rows.pop();
+	if (configuration.hasHeader) rows.shift();
 	rows.forEach((row, index) => {
 		row = row.replace(", ", ",");
 		const cells = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);

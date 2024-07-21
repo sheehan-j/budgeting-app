@@ -7,7 +7,7 @@ const DisabledConfigurationOptions = () => {
 						<div className="text-slate-500 mb-1">Configuration Name</div>
 						<input className="w-1/2" type="text" disabled />
 					</div>
-					<div id="configOptionsContainer" className="mb-8">
+					<div id="configOptionsContainer" className="mb-6">
 						<div className="text-slate-500 text-xs mb-1 font-light italic">
 							For date, amount, and merchant, enter the column number corresponding to these fields in
 							your CSV.
@@ -28,6 +28,10 @@ const DisabledConfigurationOptions = () => {
 								<input type="text" className="w-1/3" disabled />
 							</div>
 						</div>
+					</div>
+					<div className="flex justify-between mb-6">
+						<label>{"Does your CSV have a header?"}</label>
+						<input type="checkbox" disabled />
 					</div>
 					<div className="flex flex-col gap-4">
 						<div className="flex justify-between">

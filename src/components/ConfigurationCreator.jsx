@@ -33,6 +33,7 @@ const ConfigurationCreator = () => {
 		dateColNum: null,
 		amountColNum: null,
 		merchantColNum: null,
+		hasHeader: false,
 	};
 
 	useEffect(() => {
@@ -234,7 +235,7 @@ const ConfigurationCreator = () => {
 									}}
 								/>
 							</div>
-							<div id="configOptionsContainer" className="mb-8">
+							<div id="configOptionsContainer" className="mb-6">
 								<div className="text-slate-500 text-xs mb-1 font-light italic">
 									For date, amount, and merchant, enter the column number corresponding to these
 									fields in your CSV.
@@ -273,6 +274,20 @@ const ConfigurationCreator = () => {
 										}}
 									/>
 								</div>
+							</div>
+							<div className="flex justify-between mb-6">
+								<label>{"Does your CSV have a header?"}</label>
+								<input
+									className="accent-cGreen-light text-white bg-white"
+									type="checkbox"
+									checked={activeConfiguration.hasHeader}
+									onChange={(e) => {
+										setActiveConfiguration({
+											...activeConfiguration,
+											hasHeader: e.target.checked,
+										});
+									}}
+								/>
 							</div>
 							<div className="flex flex-col gap-4">
 								<CSVSymbolOption
