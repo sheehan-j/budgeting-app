@@ -158,7 +158,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 									{filter.type === "Category" && (
 										<span
 											className="text-slate-600 px-1.5 rounded"
-											style={{ backgroundColor: filter.category.colorß }}
+											style={{ backgroundColor: filter.category.color }}
 										>
 											{filter.category.name}
 										</span>

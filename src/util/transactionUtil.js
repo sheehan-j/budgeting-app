@@ -23,6 +23,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 
 			if (index + 1 === configuration.amountColNum) {
 				if (cell.includes("$")) cell = cell.replace("$", "");
+				cell = cell.replace(/,/g, "");
 
 				let coefficient;
 				if (cell.includes("-")) {
@@ -56,10 +57,8 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 				}
 
 				if (coefficient < 0) {
-					const payrollKeywords = ["ach", "payroll", "direct deposit", "salary"];
-					if (payrollKeywords.some((keyword) => cell.toLowerCase().includes(keyword))) {
-						newTransaction.categoryName = "Income";
-					} else {
+					// If while parsing the merchant cell we determined the category is income, do not overwrite
+					if (newTransaction.categoryName !== "Income") {
 						newTransaction.categoryName = "Credits/Payments";
 					}
 				}
@@ -72,6 +71,10 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 				newTransaction.day = date.getDate();
 			} else if (index + 1 === configuration.merchantColNum) {
 				newTransaction.merchant = cell;
+				const payrollKeywords = ["ach", "payroll", "direct deposit", "salary"];
+				if (payrollKeywords.some((keyword) => cell.toLowerCase().includes(keyword))) {
+					newTransaction.categoryName = "Income";
+				}
 			}
 		});
 		transactions.push(newTransaction);
