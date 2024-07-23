@@ -71,8 +71,13 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 				newTransaction.day = date.getDate();
 			} else if (index + 1 === configuration.merchantColNum) {
 				newTransaction.merchant = cell;
-				const payrollKeywords = ["ach", "payroll", "direct deposit", "salary"];
+
+				const payrollKeywords = ["payroll", "direct deposit", "salary", "direct dep"];
 				if (payrollKeywords.some((keyword) => cell.toLowerCase().includes(keyword))) {
+					newTransaction.categoryName = "Income";
+				}
+				const payrollRegexes = [/\bach\b/gi];
+				if (payrollRegexes.some((regex) => regex.test(cell))) {
 					newTransaction.categoryName = "Income";
 				}
 			}
