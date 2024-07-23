@@ -49,20 +49,15 @@ const App = () => {
 			img.src = value;
 		});
 
+		const { data, error } = await supabase.auth.getSession();
+		if (!error) setSession(data.session);
+
 		setLoading(false);
 
 		if (totalTransactionCount == -1) await fetchTotalTransactionCount();
 	};
 
 	useEffect(() => {
-		loadData();
-	}, []);
-
-	useEffect(() => {
-		supabase.auth.getSession().then(({ data: { session } }) => {
-			setSession(session);
-		});
-
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange((_event, session) => {
@@ -70,6 +65,10 @@ const App = () => {
 		});
 
 		return () => subscription.unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		loadData();
 	}, []);
 
 	window.onclick = (event) => {
