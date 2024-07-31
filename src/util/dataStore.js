@@ -1,8 +1,7 @@
 import { create } from "zustand";
-import { getTransactions, getConfigurations, getCategories, getBudgets } from "./supabaseQueries";
+import { getTransactions, getConfigurations, getCategories, getBudgets, getTransactionCount } from "./supabaseQueries";
 import { getDashboardStats } from "./statsUtil";
 import { defaultFilter } from "../constants/Filters";
-import supabase from "../config/supabaseClient";
 
 const today = new Date();
 
@@ -10,7 +9,7 @@ const store = (set, get) => ({
 	totalTransactionCount: -1,
 	setTotalTransactionCount: (totalTransactionCount) => set(() => ({ totalTransactionCount })),
 	fetchTotalTransactionCount: async () => {
-		const { count } = await supabase.from("transactions").select("*", { count: "exact", head: true });
+		const count = await getTransactionCount();
 		set({ totalTransactionCount: count });
 	},
 

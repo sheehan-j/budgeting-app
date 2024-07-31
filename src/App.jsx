@@ -23,6 +23,8 @@ const App = () => {
 		closeCategoryMenu,
 		visibleTransactionMenu,
 		closeTransactionMenu,
+		bulkActionsMenuVisible,
+		closeBulkActionsMenu,
 	} = useAnimationStore((state) => ({
 		filterMenuVisible: state.filterMenuVisible,
 		closeFilterMenu: state.closeFilterMenu,
@@ -30,6 +32,8 @@ const App = () => {
 		closeCategoryMenu: state.closeCategoryMenu,
 		visibleTransactionMenu: state.visibleTransactionMenu,
 		closeTransactionMenu: state.closeTransactionMenu,
+		bulkActionsMenuVisible: state.bulkActionsMenuVisible,
+		closeBulkActionsMenu: state.closeBulkActionsMenu,
 	}));
 	const [loading, setLoading] = useState(true);
 
@@ -74,7 +78,7 @@ const App = () => {
 	window.onclick = (event) => {
 		const categoryMenuClassNames = [".category-button", ".category-menu"];
 		if (
-			!categoryMenuClassNames.some((className) => event.target.matches(className)) &&
+			!categoryMenuClassNames.some((className) => event.target.closest(className)) &&
 			visibleCategoryMenu !== null
 		) {
 			closeCategoryMenu();
@@ -86,16 +90,21 @@ const App = () => {
 			".add-filter-option",
 			".add-filter-header",
 		];
-		if (!addFilterMenuClassNames.some((className) => event.target.matches(className)) && filterMenuVisible) {
+		if (!addFilterMenuClassNames.some((className) => event.target.closest(className)) && filterMenuVisible) {
 			closeFilterMenu();
 		}
 
-		const transactionMenuClassNames = [".transaction-menu-item", ".transaction-menu"];
+		const transactionMenuClassNames = [".transaction-menu-button", ".transaction-menu"];
 		if (
-			!transactionMenuClassNames.some((className) => event.target.matches(className)) &&
+			!transactionMenuClassNames.some((className) => event.target.closest(className)) &&
 			visibleTransactionMenu !== null
 		) {
 			closeTransactionMenu();
+		}
+
+		const bulkActionsMenuClassNames = [".bulk-actions-menu", ".bulk-actions-button"];
+		if (!bulkActionsMenuClassNames.some((className) => event.target.closest(className)) && bulkActionsMenuVisible) {
+			closeBulkActionsMenu();
 		}
 	};
 

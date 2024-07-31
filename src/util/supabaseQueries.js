@@ -2,8 +2,11 @@ import supabase from "../config/supabaseClient";
 import { getCategoricalSpending } from "./statsUtil";
 import { ignoredCategories } from "../constants/Categories";
 
+const transactionsTableName = import.meta.env.DEV ? "transactions_dev" : "transactions";
+const budgetsTableName = import.meta.env.DEV ? "budgets_dev" : "budgets";
+
 export const getTransactions = async () => {
-	let { data, error } = await supabase.from("transactions").select("*");
+	let { data, error } = await supabase.from(transactionsTableName).select("*");
 	if (error) {
 		alert("Error retrieving transactions:" + error.message);
 		return [];
@@ -12,9 +15,14 @@ export const getTransactions = async () => {
 	return formatTransactions(data);
 };
 
+export const getTransactionCount = async () => {
+	const { count } = await supabase.from(transactionsTableName).select("*", { count: "exact", head: true });
+	return count;
+};
+
 export const getTransactionsByMonth = async (dateObj) => {
 	let { data, error } = await supabase
-		.from("transactions")
+		.from(transactionsTableName)
 		.select("*")
 		.eq("month", dateObj.getMonth() + 1)
 		.eq("year", dateObj.getFullYear());
@@ -29,7 +37,6 @@ export const getTransactionsByMonth = async (dateObj) => {
 const formatTransactions = (transactions) => {
 	transactions = transactions.map((transaction) => {
 		transaction.date = new Date(transaction.date).toLocaleDateString("en-US");
-		// transaction.amount = transaction.amount.toFixed(2);
 		return transaction;
 	});
 
@@ -46,25 +53,74 @@ const formatTransactions = (transactions) => {
 };
 
 export const insertTransactions = async (transactions) => {
-	const { error } = await supabase.from("transactions").insert(transactions);
+	const { error } = await supabase.from(transactionsTableName).insert(transactions);
 	if (error) throw error;
 };
 
 export const setTransactionIgnored = async (transactionId, ignored) => {
-	const { error } = await supabase.from("transactions").update({ ignored }).eq("id", transactionId);
-	if (error) {
-		alert("Could not update transaction.");
-		return false;
-	}
+	const { error } = await supabase.from(transactionsTableName).update({ ignored }).eq("id", transactionId);
+	if (error) return false;
+	return true;
+};
+
+export const setTransactionsIgnored = async (transactions, ignored) => {
+	const payload = transactions.map((t) => {
+		return {
+			amount: t.amount,
+			categoryName: t.categoryName,
+			configurationName: t.configurationName,
+			date: t.date,
+			day: t.day,
+			id: t.id,
+			ignored,
+			merchant: t.merchant,
+			month: t.month,
+			userId: t.userId,
+			year: t.year,
+		};
+	});
+	const { error } = await supabase.from(transactionsTableName).upsert(payload);
+	if (error) return false;
+	return true;
+};
+
+export const setTransactionCategory = async (transactionId, categoryName) => {
+	const { error } = await supabase.from(transactionsTableName).update({ categoryName }).eq("id", transactionId);
+	if (error) return false;
+	return true;
+};
+
+export const setTransactionCategories = async (transactions, categoryName) => {
+	const payload = transactions.map((t) => {
+		return {
+			amount: t.amount,
+			categoryName,
+			configurationName: t.configurationName,
+			date: t.date,
+			day: t.day,
+			id: t.id,
+			ignored: t.ignored,
+			merchant: t.merchant,
+			month: t.month,
+			userId: t.userId,
+			year: t.year,
+		};
+	});
+	const { error } = await supabase.from(transactionsTableName).upsert(payload);
+	if (error) return false;
 	return true;
 };
 
 export const deleteTransaction = async (transactionId) => {
-	const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
-	if (error) {
-		alert("Could not delete transaction.");
-		return false;
-	}
+	const { error } = await supabase.from(transactionsTableName).delete().eq("id", transactionId);
+	if (error) return false;
+	return true;
+};
+
+export const deleteTransactions = async (transactions) => {
+	const transactionIds = transactions.map((transaction) => transaction.id);
+	const { error } = await supabase.from(transactionsTableName).delete().in("id", transactionIds);
+	if (error) return false;
 	return true;
 };
 
@@ -153,18 +209,17 @@ export const updateBudget = async (newBudgets, userId) => {
 	});
 
 	if (updates.length > 0) {
-		const { error } = await supabase.from("budgets").upsert(updates);
-		if (error) {
-			alert("Could not update budgets");
-			return;
-		}
+		const { error } = await supabase.from(budgetsTableName).upsert(updates);
+		if (error) return false;
 	}
 
 	if (deletes.length > 0) {
-		const { error } = await supabase.from("budgets").delete().in("categoryName", deletes).eq("userId", userId);
-		if (error) {
-			alert("Could not update budgets");
-			return;
-		}
+		const { error } = await supabase
+			.from(budgetsTableName)
+			.delete()
+			.in("categoryName", deletes)
+			.eq("userId", userId);
+		if (error) return false;
 	}
+	return true;
 };

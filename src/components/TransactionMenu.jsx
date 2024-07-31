@@ -12,11 +12,12 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 			openTransactionMenu: state.openTransactionMenu,
 			closeTransactionMenu: state.closeTransactionMenu,
 		}));
-	const { transactions, setTransactions, filters, setDashboardStats } = useDataStore((state) => ({
+	const { transactions, setTransactions, filters, setDashboardStats, setNotification } = useDataStore((state) => ({
 		transactions: state.transactions,
 		setTransactions: state.setTransactions,
 		filters: state.filters,
 		setDashboardStats: state.setDashboardStats,
+		setNotification: state.setNotification,
 	}));
 
 	const toggleTransactionMenu = () => {
@@ -41,6 +42,8 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 			});
 			setTransactions(newTransactions);
 			setDashboardStats(await getDashboardStats(newTransactions, filters));
+		} else {
+			setNotification({ type: "error", message: "Could not ignore transaction." });
 		}
 	};
 
@@ -52,14 +55,16 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 			const newTransactions = transactions.filter((transaction) => transaction.id !== transactionId);
 			setTransactions(newTransactions);
 			setDashboardStats(await getDashboardStats(newTransactions, filters));
+		} else {
+			setNotification({ type: "error", message: "Could not delete transaction." });
 		}
 	};
 
 	return (
-		<div className="transaction-menu-item w-full relative flex items-center justify-start">
+		<div className="transaction-menu w-full relative flex items-center justify-start">
 			<div className="w-full max-w-4">
-				<button onClick={toggleTransactionMenu} className="transaction-menu-item relative">
-					<img className="transaction-menu-item" src="./dots.svg" />
+				<button onClick={toggleTransactionMenu} className="transaction-menu-button relative">
+					<img src="./dots.svg" />
 				</button>
 			</div>
 			{(visibleTransactionMenu === transactionId || animatingTransactionMenu === transactionId) && (
@@ -70,16 +75,16 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 								? "enter"
 								: "exit"
 							: ""
-					} transaction-menu-item dropdown-down flex flex-col p-1 overflow-hidden w-[10rem] drop-shadow-sm absolute z-[99] right-0 top-[120%] bg-white border border-slate-200 rounded-lg`}
+					} dropdown-down flex flex-col p-1 overflow-hidden w-[10rem] drop-shadow-sm absolute z-[99] right-0 top-[120%] bg-white border border-slate-200 rounded-lg`}
 				>
 					{ignored ? (
 						<button
 							onClick={() => {
 								updateTransactionIgnored(false);
 							}}
-							className="transaction-menu-item text-start font-regular text-xs hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
+							className="transaction-menu-button text-start font-normal text-xs hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
 						>
-							<img src="./unignore.svg" className="transaction-menu-item w-5" />
+							<img src="./unignore.svg" className="w-5" />
 							Un-ignore
 						</button>
 					) : (
@@ -87,7 +92,7 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 							onClick={() => {
 								updateTransactionIgnored(true);
 							}}
-							className="transaction-menu-item text-start font-regular text-xs hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
+							className="transaction-menu-button text-start font-normal text-xs hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
 						>
 							<img src="./ignore.svg" className="transaction-menu-item w-5" />
 							Ignore
@@ -95,7 +100,7 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 					)}
 					<button
 						onClick={onClickDelete}
-						className="transaction-menu-item text-start font-regular text-xs text-red-400 hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
+						className="transaction-menu-button text-start font-normal text-xs text-red-400 hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
 					>
 						<img src="./trash.svg" className="transaction-menu-item w-5" />
 						Delete

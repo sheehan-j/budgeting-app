@@ -28,6 +28,19 @@ const store = (set, get) => ({
 		closeMenu(setUploadModalVisible, setUploadModalAnimating);
 	},
 
+	bulkActionsMenuVisible: false,
+	bulkActionsMenuAnimating: false,
+	setBulkActionsMenuVisible: (value) => set({ bulkActionsMenuVisible: value }),
+	setBulkActionsMenuAnimating: (value) => set({ bulkActionsMenuAnimating: value }),
+	openBulkActionsMenu: () => {
+		const { setBulkActionsMenuVisible, setBulkActionsMenuAnimating } = get();
+		openMenu(setBulkActionsMenuVisible, setBulkActionsMenuAnimating);
+	},
+	closeBulkActionsMenu: () => {
+		const { setBulkActionsMenuVisible, setBulkActionsMenuAnimating } = get();
+		closeMenu(setBulkActionsMenuVisible, setBulkActionsMenuAnimating);
+	},
+
 	visibleCategoryMenu: null,
 	animatingCategoryMenu: null,
 	categoryMenuDirectionDown: true,

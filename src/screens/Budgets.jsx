@@ -19,6 +19,7 @@ const Budgets = () => {
 		setBudgetsYear,
 		fetchBudgets,
 		session,
+		setNotification,
 	} = useDataStore((state) => ({
 		categories: state.categories,
 		fetchCategories: state.fetchCategories,
@@ -30,6 +31,7 @@ const Budgets = () => {
 		budgetsYear: state.budgetsYear,
 		setBudgetsYear: state.setBudgetsYear,
 		session: state.session,
+		setNotification: state.setNotification,
 	}));
 	const [localBudgets, setLocalBudgets] = useState(budgets);
 	const [preEditBudgets, setPreEditBudgets] = useState(null);
@@ -63,7 +65,8 @@ const Budgets = () => {
 	const onClickSave = async () => {
 		if (editing && !saving) {
 			setSaving(true);
-			await updateBudget(localBudgets, session.user.id);
+			if (!(await updateBudget(localBudgets, session.user.id)))
+				setNotification({ type: "error", message: "Could not update budgets." });
 			await fetchBudgets();
 			setEditing(false);
 			setSaving(false);
