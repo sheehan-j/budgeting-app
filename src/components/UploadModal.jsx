@@ -63,9 +63,7 @@ const UploadModal = () => {
 
 				const duplicateResults = await checkForDuplicateTransactions(transactions, selectedConfigurationName);
 				if (duplicateResults.length > 0) {
-					setPendingTransactions(
-						transactions.filter((t) => !duplicateResults.some((d) => d.tempInsertId === t.tempInsertId))
-					);
+					setPendingTransactions(transactions);
 					setDuplicateTransactions(duplicateResults);
 					setLoading(false);
 					return;
@@ -94,12 +92,9 @@ const UploadModal = () => {
 	const onDuplicateUpload = async () => {
 		setLoading(true);
 		let transactions = [...pendingTransactions];
+		const ignoredDuplicates = duplicateTransactions.filter((d) => !d.include);
 
-		duplicateTransactions.forEach((duplicate) => {
-			if (duplicate.include) {
-				transactions.push(duplicate);
-			}
-		});
+		transactions = transactions.filter((t) => !ignoredDuplicates.some((d) => d.tempInsertId === t.tempInsertId));
 
 		transactions = transactions.map((transaction) => {
 			delete transaction.tempInsertId;
@@ -253,11 +248,13 @@ const UploadModal = () => {
 										</div>
 									))}
 								</div>
-								<div className="text-xs text-slate-500 italic">
-									<span className="font-bold">NOTE: </span>All transactions were detected as
-									duplicates. Either select at least one transaction to be included or cancel the
-									upload.
-								</div>
+								{pendingTransactions.length === duplicateTransactions.length && (
+									<div className="text-xs text-slate-500 italic">
+										<span className="font-bold">NOTE: </span>All transactions were detected as
+										duplicates. Either select at least one transaction to be included or cancel the
+										upload.
+									</div>
+								)}
 								<div className="flex justify-between items-center">
 									<button
 										onClick={onCancelDuplicateUpload}
@@ -267,13 +264,13 @@ const UploadModal = () => {
 									</button>
 									<button
 										onClick={
-											pendingTransactions.length === 0 &&
+											pendingTransactions.length === duplicateTransactions.length &&
 											duplicateTransactions.filter((d) => d.include).length === 0
 												? () => {}
 												: onDuplicateUpload
 										}
 										className={`${
-											pendingTransactions.length === 0 &&
+											pendingTransactions.length === duplicateTransactions.length &&
 											duplicateTransactions.filter((d) => d.include).length === 0
 												? "opacity-40 hover:cursor-default"
 												: ""

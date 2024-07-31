@@ -210,7 +210,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 			<div className="bg-slate-100 py-3 px-4 w-full flex box-border">
 				<div className="font-semibold w-[3%] flex justify-center items-center">
 					<input
-						checked={localTransactions?.every((t) => t.selected)}
+						checked={localTransactions?.every((t) => t.selected) || false}
 						onChange={(e) => {
 							setLocalTransactions(
 								localTransactions.map((t) => {
