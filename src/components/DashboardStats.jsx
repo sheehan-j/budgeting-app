@@ -15,46 +15,48 @@ const DashboardStats = () => {
 				{!dashboardStatsLoading && dashboardStats && (
 					<>
 						{/* {SPENDING FOR NORMAL CATEGORIES} */}
-						{!dashboardStats.specialCaseCategory ? (
+						{dashboardStats.specialCaseCategory === false && (
 							<>
-								{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
-									<div className="text-sm text-slate-700 font-semibold">
-										{dashboardStats?.spending?.title}
-									</div>
+								{JSON.stringify(dashboardStats.filters) === JSON.stringify([{ ...defaultFilter }]) ? (
+									<>
+										<div className="text-sm text-slate-700 font-semibold">
+											{dashboardStats?.spending?.title}
+										</div>
+										<div className="text-4xl font-bold text-cGreen-dark">
+											{dashboardStats?.spending?.amount}
+										</div>
+									</>
 								) : (
-									<div className="text-sm text-slate-700 font-semibold">
-										Spending
-										<span className="text-xs text-slate-500 font-normal italic">
-											{" (filtered)"}
-										</span>
-									</div>
+									<>
+										<div className="text-sm text-slate-700 font-semibold">
+											Spending
+											<span className="text-xs text-slate-500 font-normal italic">
+												{" (filtered)"}
+											</span>
+										</div>
+										<div className="text-4xl font-bold text-cGreen-dark">
+											{dashboardStats?.spending?.amount}
+										</div>
+									</>
 								)}
-								<div className="text-4xl font-bold text-cGreen-dark">
-									{dashboardStats?.spending?.amount}
-								</div>
 							</>
-						) : (
+						)}
+						{dashboardStats.specialCaseCategory === true && (
 							<>
 								{/* {SPENDING FOR SPECIAL CASE CATEGORIES (INCOME, CREDITS/PAYMENTS)} */}
-								{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
-									<div className="text-sm text-slate-700 font-semibold">
-										{dashboardStats?.spending?.title}
-									</div>
-								) : (
-									<div className="text-sm text-slate-700 font-semibold mb-1 flex items-center justify-start">
-										<span
-											className="font-medium py-0.5 px-1 rounded mr-1"
-											style={{
-												backgroundColor: dashboardStats.category.colorLight,
-												borderWidth: "1px",
-												borderColor: dashboardStats.category.colorDark,
-											}}
-										>
-											{dashboardStats.category.name}
-										</span>
-										Total
-									</div>
-								)}
+								<div className="text-sm text-slate-700 font-semibold mb-1 flex items-center justify-start">
+									<span
+										className="font-medium py-0.5 px-1 rounded mr-1"
+										style={{
+											backgroundColor: dashboardStats.category.colorLight,
+											borderWidth: "1px",
+											borderColor: dashboardStats.category.colorDark,
+										}}
+									>
+										{dashboardStats.category.name}
+									</span>
+									Total
+								</div>
 								<div className="text-4xl font-bold text-cGreen-dark">
 									{dashboardStats?.spending?.amount}
 								</div>
@@ -98,7 +100,7 @@ const DashboardStats = () => {
 					<>
 						<div className="text-lg font-semibold mb-1">
 							Top Categories{" "}
-							{JSON.stringify(filters) !== JSON.stringify([{ ...defaultFilter }]) && (
+							{JSON.stringify(dashboardStats.filters) !== JSON.stringify([{ ...defaultFilter }]) && (
 								<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
 							)}
 						</div>

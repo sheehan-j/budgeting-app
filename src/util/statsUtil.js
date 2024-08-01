@@ -44,6 +44,7 @@ export const getDashboardStats = async (transactions, filters) => {
 		},
 		topCategories,
 		specialCaseCategory: false,
+		filters: filters,
 	};
 };
 
@@ -69,6 +70,7 @@ export const handleSpecialCaseCategoryFilter = (transactions, filters) => {
 			],
 			specialCaseCategory: true,
 			category: categoryFilters[0].category,
+			filters: filters,
 		};
 	}
 
