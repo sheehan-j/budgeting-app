@@ -1,12 +1,16 @@
 import { getCategories } from "./supabaseQueries";
 import { filterTransactions } from "./filterUtil";
 
+const specialCaseCategories = ["Income", "Credits/Payments"];
+
 export const getDashboardStats = async (transactions, filters) => {
 	const today = new Date();
 	transactions = filterTransactions(transactions, filters);
 	const categories = await getCategories();
 
-	// TODO: Add a check here to not add ignored transactions to the total
+	const specialCase = handleSpecialCaseCategoryFilter(transactions, filters);
+	if (specialCase) return specialCase;
+
 	const ignoredCategories = ["Income", "Credits/Payments"];
 
 	const spendingAmount = transactions.reduce((acc, transaction) => {
@@ -39,7 +43,36 @@ export const getDashboardStats = async (transactions, filters) => {
 			title: `${today.toLocaleString("default", { month: "long" })} Spending`,
 		},
 		topCategories,
+		specialCaseCategory: false,
 	};
+};
+
+export const handleSpecialCaseCategoryFilter = (transactions, filters) => {
+	const categoryFilters = filters.filter((filter) => filter.type === "Category");
+	if (categoryFilters.length === 1 && specialCaseCategories.includes(categoryFilters[0].category.name)) {
+		const categoricalSpending = getCategoricalSpending(transactions);
+		const categoryName = categoryFilters[0].category.name;
+
+		const amount =
+			categoryName === "Income" ? categoricalSpending["Income"] * -1 : categoricalSpending["Credits/Payments"];
+
+		return {
+			spending: {
+				amount: amount,
+			},
+			topCategories: [
+				{
+					...categoryFilters[0].category,
+					amount: amount,
+					percentage: 100,
+				},
+			],
+			specialCaseCategory: true,
+			category: categoryFilters[0].category,
+		};
+	}
+
+	return null;
 };
 
 export const getCategoricalSpending = (transactions) => {

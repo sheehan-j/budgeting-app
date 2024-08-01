@@ -11,21 +11,59 @@ const DashboardStats = () => {
 	return (
 		<div className="w-full flex gap-3">
 			<div className="py-6 pl-6 pr-12 flex flex-col justify-end bg-white border border-slate-300 rounded-2xl">
+				{/* {REAL STATS} */}
 				{!dashboardStatsLoading && dashboardStats && (
 					<>
-						{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
-							<div className="text-sm text-slate-700 font-semibold">
-								{dashboardStats?.spending?.title}
-							</div>
+						{/* {SPENDING FOR NORMAL CATEGORIES} */}
+						{!dashboardStats.specialCaseCategory ? (
+							<>
+								{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
+									<div className="text-sm text-slate-700 font-semibold">
+										{dashboardStats?.spending?.title}
+									</div>
+								) : (
+									<div className="text-sm text-slate-700 font-semibold">
+										Spending
+										<span className="text-xs text-slate-500 font-normal italic">
+											{" (filtered)"}
+										</span>
+									</div>
+								)}
+								<div className="text-4xl font-bold text-cGreen-dark">
+									{dashboardStats?.spending?.amount}
+								</div>
+							</>
 						) : (
-							<div className="text-sm text-slate-700 font-semibold">
-								Spending
-								<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
-							</div>
+							<>
+								{/* {SPENDING FOR SPECIAL CASE CATEGORIES (INCOME, CREDITS/PAYMENTS)} */}
+								{JSON.stringify(filters) === JSON.stringify([{ ...defaultFilter }]) ? (
+									<div className="text-sm text-slate-700 font-semibold">
+										{dashboardStats?.spending?.title}
+									</div>
+								) : (
+									<div className="text-sm text-slate-700 font-semibold mb-1 flex items-center justify-start">
+										<span
+											className="font-medium py-0.5 px-1 rounded mr-1"
+											style={{
+												backgroundColor: dashboardStats.category.colorLight,
+												borderWidth: "1px",
+												borderColor: dashboardStats.category.colorDark,
+											}}
+										>
+											{dashboardStats.category.name}
+										</span>
+										Total
+									</div>
+								)}
+								<div className="text-4xl font-bold text-cGreen-dark">
+									{dashboardStats?.spending?.amount}
+								</div>
+							</>
 						)}
-						<div className="text-4xl font-bold text-cGreen-dark">{dashboardStats?.spending?.amount}</div>
 					</>
 				)}
+
+				{/* {SKELETON LOADER} */}
 				{dashboardStatsLoading && (
 					<>
 						<div className="w-24 bg-slate-200 animate-pulse rounded h-4 mb-2"></div>
