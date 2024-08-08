@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { getTransactions, getConfigurations, getCategories, getBudgets, getTransactionCount } from "./supabaseQueries";
 import { getDashboardStats } from "./statsUtil";
 import { defaultFilter } from "../constants/Filters";
+import { getMerchantSettings } from "./supabaseQueries";
 
 const today = new Date();
 
@@ -80,6 +81,20 @@ const store = (set, get) => ({
 		if (budgets === null) set({ budgetsLoading: true });
 		const data = await getBudgets(new Date(`${budgetsYear}-${budgetsMonth}-01`));
 		set({ budgets: data, budgetsLoading: false });
+	},
+
+	activeSetting: null,
+	setActiveSetting: (setting) => set(() => ({ activeSetting: setting })),
+
+	merchantSettings: null,
+	setMerchantSettings: (merchantSettings) => set(() => ({ merchantSettings })),
+	merchantSettingsLoading: true,
+	editingMerchantSetting: null,
+	setEditingMerchantSetting: (merchantSetting) => set(() => ({ editingMerchantSetting: merchantSetting })),
+	fetchMerchantSettings: async () => {
+		set({ merchantSettingsLoading: true });
+		const data = await getMerchantSettings();
+		set({ merchantSettings: data, merchantSettingsLoading: false });
 	},
 });
 

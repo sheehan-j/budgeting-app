@@ -3,6 +3,7 @@ import { useAnimationStore } from "../util/animationStore";
 import { useDataStore } from "../util/dataStore";
 import { setTransactionIgnored, deleteTransaction } from "../util/supabaseQueries";
 import { getDashboardStats } from "../util/statsUtil";
+import { Link } from "react-router-dom";
 
 const TransactionMenu = ({ transactionId, ignored }) => {
 	const { visibleTransactionMenu, animatingTransactionMenu, openTransactionMenu, closeTransactionMenu } =
@@ -12,12 +13,24 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 			openTransactionMenu: state.openTransactionMenu,
 			closeTransactionMenu: state.closeTransactionMenu,
 		}));
-	const { transactions, setTransactions, filters, setDashboardStats, setNotification } = useDataStore((state) => ({
+	const {
+		transactions,
+		setTransactions,
+		filters,
+		setDashboardStats,
+		setNotification,
+		setEditingMerchantSetting,
+		setActiveSetting,
+		categories,
+	} = useDataStore((state) => ({
 		transactions: state.transactions,
 		setTransactions: state.setTransactions,
 		filters: state.filters,
 		setDashboardStats: state.setDashboardStats,
 		setNotification: state.setNotification,
+		setEditingMerchantSetting: state.setEditingMerchantSetting,
+		setActiveSetting: state.setActiveSetting,
+		categories: state.categories,
 	}));
 
 	const toggleTransactionMenu = () => {
@@ -60,6 +73,19 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 		}
 	};
 
+	const onClickSaveMerchant = () => {
+		const matchingTransaction = transactions.find((transaction) => transaction.id === transactionId);
+		if (matchingTransaction) {
+			setEditingMerchantSetting({
+				id: -1,
+				category: categories[0],
+				text: matchingTransaction.merchant,
+				type: "equals",
+			});
+			setActiveSetting("Merchants");
+		}
+	};
+
 	return (
 		<div className="transaction-menu w-full relative flex items-center justify-start">
 			<div className="w-full max-w-4">
@@ -77,6 +103,15 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 							: ""
 					} dropdown-down flex flex-col p-1 overflow-hidden w-[10rem] drop-shadow-sm absolute z-[99] right-0 top-[120%] bg-white border border-slate-200 rounded-lg`}
 				>
+					<Link to="/settings">
+						<button
+							onClick={() => onClickSaveMerchant()}
+							className="transaction-menu-button w-full text-start font-normal text-xs hover:bg-slate-50 px-2 py-1 rounded flex items-center gap-1.5"
+						>
+							<img src="./save.svg" className="w-5" />
+							Save Merchant
+						</button>
+					</Link>
 					{ignored ? (
 						<button
 							onClick={() => {

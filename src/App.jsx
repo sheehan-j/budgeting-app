@@ -5,7 +5,7 @@ import { useDataStore } from "./util/dataStore";
 import { useAnimationStore } from "./util/animationStore";
 import Dashboard from "./screens/Dashboard";
 import Budgets from "./screens/Budgets";
-import Configurations from "./screens/Configurations";
+import Settings from "./screens/Settings";
 import Login from "./screens/Login";
 import supabase from "./config/supabaseClient";
 
@@ -34,6 +34,27 @@ const App = () => {
 		closeTransactionMenu: state.closeTransactionMenu,
 		bulkActionsMenuVisible: state.bulkActionsMenuVisible,
 		closeBulkActionsMenu: state.closeBulkActionsMenu,
+	}));
+	const {
+		transactions,
+		fetchTransactions,
+		categories,
+		fetchCategories,
+		dashboardStats,
+		fetchDashboardStats,
+		filters,
+		merchantSettings,
+		fetchMerchantSettings,
+	} = useDataStore((state) => ({
+		transactions: state.transactions,
+		fetchTransactions: state.fetchTransactions,
+		categories: state.categories,
+		fetchCategories: state.fetchCategories,
+		dashboardStats: state.dashboardStats,
+		fetchDashboardStats: state.fetchDashboardStats,
+		filters: state.filters,
+		merchantSettings: state.merchantSettings,
+		fetchMerchantSettings: state.fetchMerchantSettings,
 	}));
 	const [loading, setLoading] = useState(true);
 
@@ -108,6 +129,14 @@ const App = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (transactions === null) fetchTransactions();
+		if (categories === null) fetchCategories();
+		if (dashboardStats === null) fetchDashboardStats();
+		if (merchantSettings === null) fetchMerchantSettings();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [transactions, filters, dashboardStats, merchantSettings]);
+
 	if (loading) return null;
 
 	return (
@@ -116,7 +145,7 @@ const App = () => {
 				{session ? (
 					<>
 						<Route path="/*" element={<Dashboard />} />
-						<Route path="/configurations" element={<Configurations />} />
+						<Route path="/settings" element={<Settings />} />
 						<Route path="/budgets" element={<Budgets />} />
 					</>
 				) : (

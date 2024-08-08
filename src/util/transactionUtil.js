@@ -90,6 +90,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 export const checkForDuplicateTransactions = async (transactions, configuration) => {
 	const existingTransactions = await getTransactions();
 	const duplicateTransactions = [];
+	console.log(existingTransactions.filter((t) => t.merchant === "yer"));
 	transactions.forEach((transaction) => {
 		if (
 			existingTransactions.some(
@@ -105,4 +106,19 @@ export const checkForDuplicateTransactions = async (transactions, configuration)
 	});
 
 	return duplicateTransactions;
+};
+
+export const checkForSavedMerchants = (transactions, merchantSettings) => {
+	transactions = transactions.map((transaction) => {
+		merchantSettings.forEach((merchantSetting) => {
+			if (merchantSetting.type === "contains" && transaction.merchant.includes(merchantSetting.text)) {
+				transaction.categoryName = merchantSetting.category.name;
+			} else if (merchantSetting.type === "equals" && transaction.merchant === merchantSetting.text) {
+				transaction.categoryName = merchantSetting.category.name;
+			}
+		});
+		return transaction;
+	});
+
+	return transactions;
 };

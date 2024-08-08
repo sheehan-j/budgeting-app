@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { insertTransactions } from "../util/supabaseQueries";
-import { parseTransactionsFromCSV, checkForDuplicateTransactions } from "../util/transactionUtil";
+import {
+	parseTransactionsFromCSV,
+	checkForDuplicateTransactions,
+	checkForSavedMerchants,
+} from "../util/transactionUtil";
 import { useDataStore } from "../util/dataStore";
 import { useAnimationStore } from "../util/animationStore";
 import ButtonSpinner from "../components/ButtonSpinner";
@@ -10,15 +14,23 @@ const UploadModal = () => {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [pendingTransactions, setPendingTransactions] = useState([]);
 	const [duplicateTransactions, setDuplicateTransactions] = useState([]);
-	const { configurations, fetchConfigurations, setNotification, fetchTransactions, fetchDashboardStats, session } =
-		useDataStore((state) => ({
-			configurations: state.configurations,
-			fetchConfigurations: state.fetchConfigurations,
-			setNotification: state.setNotification,
-			fetchTransactions: state.fetchTransactions,
-			fetchDashboardStats: state.fetchDashboardStats,
-			session: state.session,
-		}));
+	const {
+		configurations,
+		fetchConfigurations,
+		setNotification,
+		fetchTransactions,
+		fetchDashboardStats,
+		merchantSettings,
+		session,
+	} = useDataStore((state) => ({
+		configurations: state.configurations,
+		fetchConfigurations: state.fetchConfigurations,
+		setNotification: state.setNotification,
+		fetchTransactions: state.fetchTransactions,
+		fetchDashboardStats: state.fetchDashboardStats,
+		merchantSettings: state.merchantSettings,
+		session: state.session,
+	}));
 	const { uploadModalVisible, uploadModalAnimating, closeUploadModal } = useAnimationStore((state) => ({
 		uploadModalVisible: state.uploadModalVisible,
 		uploadModalAnimating: state.uploadModalAnimating,
@@ -75,6 +87,9 @@ const UploadModal = () => {
 					delete transaction.tempInsertId;
 					return transaction;
 				});
+
+				transactions = checkForSavedMerchants(transactions, merchantSettings);
+
 				await insertTransactions(transactions);
 				await fetchTransactions();
 				await fetchDashboardStats();
@@ -106,6 +121,8 @@ const UploadModal = () => {
 			delete transaction.include;
 			return transaction;
 		});
+
+		transactions = checkForSavedMerchants(transactions, merchantSettings);
 
 		await insertTransactions(transactions);
 		await fetchTransactions();
@@ -242,9 +259,9 @@ const UploadModal = () => {
 																if (
 																	duplicate.tempInsertId === transaction.tempInsertId
 																) {
-																	transaction.include = e.target.checked;
+																	duplicate.include = e.target.checked;
 																}
-																return transaction;
+																return duplicate;
 															})
 														);
 													}}

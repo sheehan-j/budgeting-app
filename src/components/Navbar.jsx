@@ -38,9 +38,9 @@ const Navbar = ({ activePage }) => {
 					inactiveIconSrc={"./transactions_slate.svg"}
 				/>
 				<NavItem
-					text={"Configurations"}
-					link={"/configurations"}
-					active={activePage === "Configurations"}
+					text={"Settings"}
+					link={"/settings"}
+					active={activePage === "Settings"}
 					activeIconSrc={"./settings_green.svg"}
 					inactiveIconSrc={"./settings_slate.svg"}
 				/>
