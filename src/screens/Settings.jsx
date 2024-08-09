@@ -22,7 +22,7 @@ const Settings = () => {
 	return (
 		<div className="w-screen h-screen flex relative">
 			<Navbar activePage={"Settings"} />
-			<div className="grow h-full flex gap-3 overflow-y-auto bg-slate-100 p-4 md:p-8 lg:p-12 xl:p-32">
+			<div className="grow h-full flex gap-3 overflow-y-auto bg-slate-100 p-4 md:p-8 lg:p-8 xl:p-16 2xl:p-32">
 				<SettingsNavBar settings={settings} activeSetting={activeSetting} setActiveSetting={setActiveSetting} />
 				<div className="grow h-full flex bg-white border border-slate-300 rounded-2xl">
 					{(activeSetting === "Configurations" || activeSetting === null) && <ConfigurationCreator />}

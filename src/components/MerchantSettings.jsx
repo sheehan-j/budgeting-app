@@ -9,7 +9,6 @@ import ButtonSpinner from "./ButtonSpinner";
 
 const MerchantSettings = () => {
 	const {
-		categories,
 		merchantSettings,
 		editingMerchantSetting,
 		setEditingMerchantSetting,
@@ -18,7 +17,6 @@ const MerchantSettings = () => {
 		setDashboardStats,
 		setNotification,
 	} = useDataStore((state) => ({
-		categories: state.categories,
 		merchantSettings: state.merchantSettings,
 		editingMerchantSetting: state.editingMerchantSetting,
 		setEditingMerchantSetting: state.setEditingMerchantSetting,
@@ -33,6 +31,7 @@ const MerchantSettings = () => {
 		create: false,
 		apply: false,
 	});
+	const [merchantSearch, setMerchantSearch] = useState("");
 	const bottomRef = useRef(null);
 
 	const onClickCreate = () => {
@@ -42,7 +41,7 @@ const MerchantSettings = () => {
 			setEditingMerchantSetting(null);
 			return;
 		}
-		setEditingMerchantSetting({ id: -1, category: categories[0], text: "", type: "contains" });
+		setEditingMerchantSetting({ id: -1, category: { name: "Uncategorized" }, text: "", type: "contains" });
 		setTimeout(() => {
 			if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
 		}, 100);
@@ -74,7 +73,20 @@ const MerchantSettings = () => {
 	return (
 		<div className="grow flex flex-col">
 			<div className="grow overflow-y-auto p-6">
-				<div className="text-lg text-slate-600 font-semibold mb-3">Merchants</div>
+				<div className="flex justify-between items-center flex-wrap mb-3">
+					<div className="text-lg text-slate-600 font-semibold">Merchants</div>
+					<div className="w-52 flex items-center border border-slate-300 rounded p-0.5">
+						<input
+							value={merchantSearch}
+							onChange={(e) => setMerchantSearch(e.target.value)}
+							placeholder="Search merchants"
+							className="grow text-xs outline-none bg-transparent pl-1"
+						></input>
+						<div className="w-5 p-0.5 mr-0.5">
+							<img src="./search.svg" className="w-full h-full" />
+						</div>
+					</div>
+				</div>
 				{/* <div className="w-full bg-cGreen-lighter border border-cGreen p-3 rounded-lg mb-3">
 					<span className="font-semibold">NOTE:</span> One or more of your saved merchants is{" "}
 					<span className="underline">contained</span> within another merchant. This may cause unexpected
@@ -90,9 +102,17 @@ const MerchantSettings = () => {
 							{"No merchants saved :("}
 						</div>
 					)}
-					{merchantSettings?.map((item, index) => (
-						<MerchantSettingsItem key={index} item={item} loading={loading} setLoading={setLoading} />
-					))}
+					{merchantSettings
+						?.filter((m) => m.text.toLowerCase().includes(merchantSearch.toLowerCase()))
+						.map((item, index) => (
+							<MerchantSettingsItem key={index} item={item} loading={loading} setLoading={setLoading} />
+						))}
+					{merchantSettings?.filter((m) => m.text.toLowerCase().includes(merchantSearch.toLowerCase()))
+						.length === 0 && (
+						<div className="w-full border border-slate-300 rounded flex justify-center items-center py-3">
+							{"No search results found :("}
+						</div>
+					)}
 					{editingMerchantSetting?.id === -1 && (
 						<MerchantSettingsItemCreate loading={loading} setLoading={setLoading} />
 					)}

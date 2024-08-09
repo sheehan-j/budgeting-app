@@ -21,7 +21,6 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 		setNotification,
 		setEditingMerchantSetting,
 		setActiveSetting,
-		categories,
 	} = useDataStore((state) => ({
 		transactions: state.transactions,
 		setTransactions: state.setTransactions,
@@ -30,7 +29,6 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 		setNotification: state.setNotification,
 		setEditingMerchantSetting: state.setEditingMerchantSetting,
 		setActiveSetting: state.setActiveSetting,
-		categories: state.categories,
 	}));
 
 	const toggleTransactionMenu = () => {
@@ -78,7 +76,7 @@ const TransactionMenu = ({ transactionId, ignored }) => {
 		if (matchingTransaction) {
 			setEditingMerchantSetting({
 				id: -1,
-				category: categories[0],
+				category: { name: matchingTransaction.categoryName },
 				text: matchingTransaction.merchant,
 				type: "equals",
 			});
