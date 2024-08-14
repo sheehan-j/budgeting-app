@@ -270,11 +270,13 @@ const UploadModal = () => {
 										</div>
 									))}
 								</div>
-								<div className="text-xs text-slate-500 italic">
-									<span className="font-bold">NOTE: </span>All transactions were detected as
-									duplicates. Either select at least one transaction to be included or cancel the
-									upload.
-								</div>
+								{pendingTransactions.length == 0 && (
+									<div className="text-xs text-slate-500 italic">
+										<span className="font-bold">NOTE: </span>All transactions were detected as
+										duplicates. Either select at least one transaction to be included or cancel the
+										upload.
+									</div>
+								)}
 								<div className="flex justify-between items-center">
 									<button
 										onClick={onCancelDuplicateUpload}
