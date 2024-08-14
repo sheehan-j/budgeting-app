@@ -62,7 +62,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 						newTransaction.categoryName = "Credits/Payments";
 					}
 				}
-				newTransaction.amount = parseFloat(parseFloat(cell) * coefficient);
+				newTransaction.amount = Math.round((parseFloat(cell) * coefficient + Number.EPSILON) * 100) / 100;
 			} else if (index + 1 === configuration.dateColNum) {
 				const date = new Date(cell);
 				newTransaction.date = date.toLocaleDateString("en-US");
@@ -90,7 +90,6 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 export const checkForDuplicateTransactions = async (transactions, configuration) => {
 	const existingTransactions = await getTransactions();
 	const duplicateTransactions = [];
-	console.log(existingTransactions.filter((t) => t.merchant === "yer"));
 	transactions.forEach((transaction) => {
 		if (
 			existingTransactions.some(
