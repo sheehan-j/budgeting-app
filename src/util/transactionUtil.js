@@ -62,7 +62,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 						newTransaction.categoryName = "Credits/Payments";
 					}
 				}
-				newTransaction.amount = parseFloat(parseFloat(cell) * coefficient);
+				newTransaction.amount = Math.round((parseFloat(cell) * coefficient + Number.EPSILON) * 100) / 100;
 			} else if (index + 1 === configuration.dateColNum) {
 				const date = new Date(cell);
 				newTransaction.date = date.toLocaleDateString("en-US");
@@ -105,4 +105,19 @@ export const checkForDuplicateTransactions = async (transactions, configuration)
 	});
 
 	return duplicateTransactions;
+};
+
+export const checkForSavedMerchants = (transactions, merchantSettings) => {
+	transactions = transactions.map((transaction) => {
+		merchantSettings.forEach((merchantSetting) => {
+			if (merchantSetting.type === "contains" && transaction.merchant.includes(merchantSetting.text)) {
+				transaction.categoryName = merchantSetting.category.name;
+			} else if (merchantSetting.type === "equals" && transaction.merchant === merchantSetting.text) {
+				transaction.categoryName = merchantSetting.category.name;
+			}
+		});
+		return transaction;
+	});
+
+	return transactions;
 };

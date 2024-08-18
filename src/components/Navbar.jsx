@@ -20,7 +20,7 @@ const Navbar = ({ activePage }) => {
 	};
 
 	return (
-		<nav className="h-full w-3/12 lg:w-2/12 bg-white flex flex-col justify-between gap-5">
+		<nav className="h-full shrink-0 w-4/12 md:w-3/12 xl:w-[18%] 2xl:w-2/12 bg-white flex flex-col justify-between gap-5">
 			<div className="flex flex-col gap-5 px-6 py-10 ">
 				{/* <div className="font-extrabold text-cGreen-dark text-4xl px-3">LOGO</div> */}
 				<NavItem
@@ -38,9 +38,9 @@ const Navbar = ({ activePage }) => {
 					inactiveIconSrc={"./transactions_slate.svg"}
 				/>
 				<NavItem
-					text={"Configurations"}
-					link={"/configurations"}
-					active={activePage === "Configurations"}
+					text={"Settings"}
+					link={"/settings"}
+					active={activePage === "Settings"}
 					activeIconSrc={"./settings_green.svg"}
 					inactiveIconSrc={"./settings_slate.svg"}
 				/>

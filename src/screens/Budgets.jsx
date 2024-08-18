@@ -76,7 +76,7 @@ const Budgets = () => {
 	return (
 		<div className="w-screen h-screen flex overflow-hidden relative">
 			<Navbar activePage={"Budgets"} />
-			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-8 lg:p-12 xl:p-32">
+			<div className="grow flex flex-col gap-3 h-full overflow-y-auto no-scrollbar bg-slate-100 p-4 md:p-8 lg:p-8 xl:p-16 2xl:p-32">
 				<div className="w-full grow flex flex-col bg-white border border-slate-300 rounded-2xl py-4">
 					<div className="flex justify-between px-5 mb-3">
 						<div className="flex items-center">

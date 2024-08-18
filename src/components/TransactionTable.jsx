@@ -210,7 +210,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 			<div className="bg-slate-100 py-3 px-4 w-full flex box-border">
 				<div className="font-semibold w-[3%] flex justify-center items-center">
 					<input
-						checked={localTransactions?.every((t) => t.selected) || false}
+						checked={(localTransactions?.every((t) => t.selected) && localTransactions.length > 0) || false}
 						onChange={(e) => {
 							setLocalTransactions(
 								localTransactions.map((t) => {
@@ -279,12 +279,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 														: t;
 												});
 												setLocalTransactions(newLocalTransactions);
-												// if (e.target.checked) {
-												// 	if (newLocalTransactions.every((t) => t.selected))
-												// 		setAllTransactionSelected(true);
-												// } else {
-												// 	setAllTransactionSelected(false);
-												// }
 											}}
 											className="max-w-5 w-full"
 											type="checkbox"

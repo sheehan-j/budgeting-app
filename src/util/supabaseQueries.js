@@ -111,6 +111,12 @@ export const setTransactionCategories = async (transactions, categoryName) => {
 	return true;
 };
 
+export const updateTransactions = async (transactions) => {
+	let { error } = await supabase.from(transactionsTableName).upsert(transactions);
+	if (error) return false;
+	return true;
+};
+
 export const deleteTransaction = async (transactionId) => {
 	const { error } = await supabase.from(transactionsTableName).delete().eq("id", transactionId);
 	if (error) return false;
@@ -221,5 +227,34 @@ export const updateBudget = async (newBudgets, userId) => {
 			.eq("userId", userId);
 		if (error) return false;
 	}
+	return true;
+};
+
+export const getMerchantSettings = async () => {
+	let { data, error } = await supabase.from("merchants").select("*, category:categories(*)");
+	if (error) {
+		alert("Could not fetch merchant settings");
+		return [];
+	}
+
+	data = data.map((merchantSetting) => {
+		delete merchantSetting.categoryName;
+		return merchantSetting;
+	});
+
+	data.sort((a, b) => a.id - b.id);
+
+	return data;
+};
+
+export const upsertMerchantSetting = async (merchantSetting) => {
+	const { error } = await supabase.from("merchants").upsert(merchantSetting);
+	if (error) return false;
+	return true;
+};
+
+export const deleteMerchantSetting = async (merchantSettingId) => {
+	const { error } = await supabase.from("merchants").delete().eq("id", merchantSettingId);
+	if (error) return false;
 	return true;
 };

@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { insertTransactions } from "../util/supabaseQueries";
-import { parseTransactionsFromCSV, checkForDuplicateTransactions } from "../util/transactionUtil";
+import {
+	parseTransactionsFromCSV,
+	checkForDuplicateTransactions,
+	checkForSavedMerchants,
+} from "../util/transactionUtil";
 import { useDataStore } from "../util/dataStore";
 import { useAnimationStore } from "../util/animationStore";
 import ButtonSpinner from "../components/ButtonSpinner";
@@ -10,15 +14,23 @@ const UploadModal = () => {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [pendingTransactions, setPendingTransactions] = useState([]);
 	const [duplicateTransactions, setDuplicateTransactions] = useState([]);
-	const { configurations, fetchConfigurations, setNotification, fetchTransactions, fetchDashboardStats, session } =
-		useDataStore((state) => ({
-			configurations: state.configurations,
-			fetchConfigurations: state.fetchConfigurations,
-			setNotification: state.setNotification,
-			fetchTransactions: state.fetchTransactions,
-			fetchDashboardStats: state.fetchDashboardStats,
-			session: state.session,
-		}));
+	const {
+		configurations,
+		fetchConfigurations,
+		setNotification,
+		fetchTransactions,
+		fetchDashboardStats,
+		merchantSettings,
+		session,
+	} = useDataStore((state) => ({
+		configurations: state.configurations,
+		fetchConfigurations: state.fetchConfigurations,
+		setNotification: state.setNotification,
+		fetchTransactions: state.fetchTransactions,
+		fetchDashboardStats: state.fetchDashboardStats,
+		merchantSettings: state.merchantSettings,
+		session: state.session,
+	}));
 	const { uploadModalVisible, uploadModalAnimating, closeUploadModal } = useAnimationStore((state) => ({
 		uploadModalVisible: state.uploadModalVisible,
 		uploadModalAnimating: state.uploadModalAnimating,
@@ -63,7 +75,9 @@ const UploadModal = () => {
 
 				const duplicateResults = await checkForDuplicateTransactions(transactions, selectedConfigurationName);
 				if (duplicateResults.length > 0) {
-					setPendingTransactions(transactions);
+					setPendingTransactions(
+						transactions.filter((t) => !duplicateResults.some((d) => d.tempInsertId === t.tempInsertId))
+					);
 					setDuplicateTransactions(duplicateResults);
 					setLoading(false);
 					return;
@@ -73,6 +87,9 @@ const UploadModal = () => {
 					delete transaction.tempInsertId;
 					return transaction;
 				});
+
+				transactions = checkForSavedMerchants(transactions, merchantSettings);
+
 				await insertTransactions(transactions);
 				await fetchTransactions();
 				await fetchDashboardStats();
@@ -92,15 +109,20 @@ const UploadModal = () => {
 	const onDuplicateUpload = async () => {
 		setLoading(true);
 		let transactions = [...pendingTransactions];
-		const ignoredDuplicates = duplicateTransactions.filter((d) => !d.include);
 
-		transactions = transactions.filter((t) => !ignoredDuplicates.some((d) => d.tempInsertId === t.tempInsertId));
+		duplicateTransactions.forEach((duplicate) => {
+			if (duplicate.include) {
+				transactions.push(duplicate);
+			}
+		});
 
 		transactions = transactions.map((transaction) => {
 			delete transaction.tempInsertId;
 			delete transaction.include;
 			return transaction;
 		});
+
+		transactions = checkForSavedMerchants(transactions, merchantSettings);
 
 		await insertTransactions(transactions);
 		await fetchTransactions();
@@ -237,9 +259,9 @@ const UploadModal = () => {
 																if (
 																	duplicate.tempInsertId === transaction.tempInsertId
 																) {
-																	transaction.include = e.target.checked;
+																	duplicate.include = e.target.checked;
 																}
-																return transaction;
+																return duplicate;
 															})
 														);
 													}}
@@ -248,7 +270,7 @@ const UploadModal = () => {
 										</div>
 									))}
 								</div>
-								{pendingTransactions.length === duplicateTransactions.length && (
+								{pendingTransactions.length == 0 && (
 									<div className="text-xs text-slate-500 italic">
 										<span className="font-bold">NOTE: </span>All transactions were detected as
 										duplicates. Either select at least one transaction to be included or cancel the
@@ -264,13 +286,13 @@ const UploadModal = () => {
 									</button>
 									<button
 										onClick={
-											pendingTransactions.length === duplicateTransactions.length &&
+											pendingTransactions.length === 0 &&
 											duplicateTransactions.filter((d) => d.include).length === 0
 												? () => {}
 												: onDuplicateUpload
 										}
 										className={`${
-											pendingTransactions.length === duplicateTransactions.length &&
+											pendingTransactions.length === 0 &&
 											duplicateTransactions.filter((d) => d.include).length === 0
 												? "opacity-40 hover:cursor-default"
 												: ""
