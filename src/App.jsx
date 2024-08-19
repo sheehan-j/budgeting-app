@@ -6,7 +6,7 @@ import { useAnimationStore } from "./util/animationStore";
 import Dashboard from "./screens/Dashboard";
 import Budgets from "./screens/Budgets";
 import Settings from "./screens/Settings";
-import Login from "./screens/Login";
+import LoginWithSignupDisabled from "./screens/LoginWithSignupDisabled";
 import supabase from "./config/supabaseClient";
 
 const App = () => {
@@ -150,7 +150,7 @@ const App = () => {
 					</>
 				) : (
 					<>
-						<Route path="/*" element={<Login />} />
+						<Route path="/*" element={<LoginWithSignupDisabled />} />
 					</>
 				)}
 			</Routes>
