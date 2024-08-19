@@ -87,6 +87,7 @@ const App = () => {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange((_event, session) => {
 			setSession(session);
+			updateDataStore();
 		});
 
 		return () => subscription.unsubscribe();
@@ -129,11 +130,15 @@ const App = () => {
 		}
 	};
 
-	useEffect(() => {
+	const updateDataStore = () => {
 		if (transactions === null) fetchTransactions();
 		if (categories === null) fetchCategories();
 		if (dashboardStats === null) fetchDashboardStats();
 		if (merchantSettings === null) fetchMerchantSettings();
+	};
+
+	useEffect(() => {
+		updateDataStore();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [transactions, filters, dashboardStats, merchantSettings]);
 
