@@ -13,7 +13,6 @@ const DashboardStats = () => {
 	const [showAllCategories, setShowAllCategories] = useState(false);
 	// const allCategoriesRef = useRef(null);
 	const extraCategoriesRef = useRef(null);
-	console.log(extraCategoriesRef.current?.scrollHeight);
 
 	return (
 		<div className="w-full flex gap-3">
@@ -142,12 +141,18 @@ const DashboardStats = () => {
 														: "-100%"
 													// eslint-disable-next-line no-mixed-spaces-and-tabs
 											  }]`
-									} flex flex-col gap-2 transition-[margin] duration-100`}
+									} flex flex-col gap-2 transition-[margin] duration-200`}
 									style={{
 										marginTop: showAllCategories
 											? "0"
 											: extraCategoriesRef.current?.scrollHeight
-											? `-${extraCategoriesRef.current.scrollHeight}px`
+											? `-${
+													extraCategoriesRef.current.scrollHeight +
+													30 +
+													extraCategoriesRef.current.scrollHeight /
+														dashboardStats?.categories?.length
+													// eslint-disable-next-line no-mixed-spaces-and-tabs
+											  }px`
 											: "-100%",
 									}}
 								>
