@@ -87,7 +87,6 @@ const App = () => {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange((_event, session) => {
 			setSession(session);
-			updateDataStore();
 		});
 
 		return () => subscription.unsubscribe();
