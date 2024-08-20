@@ -137,12 +137,19 @@ const DashboardStats = () => {
 										showAllCategories
 											? "mt-0"
 											: `mt-[${
-													extraCategoriesRef.current
+													extraCategoriesRef.current?.scrollHeight
 														? `-${extraCategoriesRef.current.scrollHeight}px`
 														: "-100%"
 													// eslint-disable-next-line no-mixed-spaces-and-tabs
 											  }]`
-									} flex flex-col gap-2 transition-[margin] duration-200`}
+									} flex flex-col gap-2 transition-[margin] duration-100`}
+									style={{
+										marginTop: showAllCategories
+											? "0"
+											: extraCategoriesRef.current?.scrollHeight
+											? `-${extraCategoriesRef.current.scrollHeight}px`
+											: "-100%",
+									}}
 								>
 									{dashboardStats?.categories?.length > 3 && (
 										<>
