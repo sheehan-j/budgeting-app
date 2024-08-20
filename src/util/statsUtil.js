@@ -2,6 +2,7 @@ import { getCategories } from "./supabaseQueries";
 import { filterTransactions } from "./filterUtil";
 
 const specialCaseCategories = ["Income", "Credits/Payments"];
+const ignoredCategories = ["Income", "Credits/Payments"];
 
 export const getDashboardStats = async (transactions, filters) => {
 	const today = new Date();
@@ -10,8 +11,6 @@ export const getDashboardStats = async (transactions, filters) => {
 
 	const specialCase = handleSpecialCaseCategoryFilter(transactions, filters);
 	if (specialCase) return specialCase;
-
-	const ignoredCategories = ["Income", "Credits/Payments"];
 
 	const spendingAmount = transactions.reduce((acc, transaction) => {
 		if (!ignoredCategories.includes(transaction.categoryName) && !transaction.ignored) acc += transaction.amount;
@@ -24,8 +23,8 @@ export const getDashboardStats = async (transactions, filters) => {
 	});
 
 	// Sort and pull the top three categories
-	const sortedCategories = Object.entries(categoricalSpending).sort((a, b) => b[1] - a[1]);
-	let topCategories = sortedCategories.slice(0, 3).map(([categoryName, amount]) => {
+	let sortedCategories = Object.entries(categoricalSpending).sort((a, b) => b[1] - a[1]);
+	sortedCategories = sortedCategories.map(([categoryName, amount]) => {
 		const categoryData = categories.find((category) => category.name === categoryName);
 		return {
 			name: categoryName,
@@ -39,10 +38,10 @@ export const getDashboardStats = async (transactions, filters) => {
 
 	return {
 		spending: {
-			amount: spendingAmount.toFixed(2),
+			amount: spendingAmount,
 			title: `${today.toLocaleString("default", { month: "long" })} Spending`,
 		},
-		topCategories,
+		categories: sortedCategories,
 		specialCaseCategory: false,
 		filters: filters,
 	};
@@ -54,8 +53,14 @@ export const handleSpecialCaseCategoryFilter = (transactions, filters) => {
 		const categoricalSpending = getCategoricalSpending(transactions);
 		const categoryName = categoryFilters[0].category.name;
 
-		const amount =
-			categoryName === "Income" ? categoricalSpending["Income"] * -1 : categoricalSpending["Credits/Payments"];
+		let amount;
+		if (categoryName === "Income") {
+			amount = "Income" in categoricalSpending ? categoricalSpending["Income"] * -1 : 0;
+		} else if (categoryName === "Credits/Payments") {
+			amount = "Credits/Payments" in categoricalSpending ? categoricalSpending["Credits/Payments"] : 0;
+		} else {
+			amount = -1;
+		}
 
 		return {
 			spending: {

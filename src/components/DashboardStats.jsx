@@ -1,12 +1,19 @@
+import { useState, useLayoutEffect, useRef } from "react";
 import { useDataStore } from "../util/dataStore";
 import { defaultFilter } from "../constants/Filters";
+import DashboardStatsCategory from "./DashboardStatsCategory";
 
 const DashboardStats = () => {
-	const { dashboardStats, dashboardStatsLoading, filters } = useDataStore((state) => ({
+	const { dashboardStats, dashboardStatsLoading } = useDataStore((state) => ({
 		dashboardStats: state.dashboardStats,
 		dashboardStatsLoading: state.dashboardStatsLoading,
 		filters: state.filters,
 	}));
+
+	const [showAllCategories, setShowAllCategories] = useState(false);
+	// const allCategoriesRef = useRef(null);
+	const extraCategoriesRef = useRef(null);
+	console.log(extraCategoriesRef.current?.scrollHeight);
 
 	return (
 		<div className="w-full flex gap-3">
@@ -23,7 +30,7 @@ const DashboardStats = () => {
 											{dashboardStats?.spending?.title}
 										</div>
 										<div className="text-4xl font-bold text-cGreen-dark">
-											{dashboardStats?.spending?.amount}
+											{dashboardStats?.spending?.amount?.toFixed(2)}
 										</div>
 									</>
 								) : (
@@ -35,7 +42,7 @@ const DashboardStats = () => {
 											</span>
 										</div>
 										<div className="text-4xl font-bold text-cGreen-dark">
-											{dashboardStats?.spending?.amount}
+											{dashboardStats?.spending?.amount?.toFixed(2)}
 										</div>
 									</>
 								)}
@@ -58,7 +65,7 @@ const DashboardStats = () => {
 									Total
 								</div>
 								<div className="text-4xl font-bold text-cGreen-dark">
-									{dashboardStats?.spending?.amount}
+									{dashboardStats?.spending?.amount?.toFixed(2)}
 								</div>
 							</>
 						)}
@@ -77,7 +84,7 @@ const DashboardStats = () => {
 				{/* <div className="text-sm text-slate-700 font-medium">{dashboardStats?.spending?.title}</div>
 				<div>
 					<div className="bg-cGreen-lightTrans inline-block border border-cGreen p-1 text-4xl font-bold text-cGreen-dark">
-						{dashboardStats?.spending?.amount}
+						{dashboardStats?.spending?.amount?.toFixed(2)}
 					</div>
 				</div> */}
 				{dashboardStatsLoading && (
@@ -98,39 +105,56 @@ const DashboardStats = () => {
 				)}
 				{!dashboardStatsLoading && (
 					<>
-						<div className="text-lg font-semibold mb-1">
-							Top Categories{" "}
-							{JSON.stringify(dashboardStats.filters) !== JSON.stringify([{ ...defaultFilter }]) && (
-								<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
+						<div className="flex justify-between items-center text-lg font-semibold mb-1.5">
+							{/* TOP CATEGORIES LABEL */}
+							<span>
+								Categorical Spending
+								{JSON.stringify(dashboardStats.filters) !== JSON.stringify([{ ...defaultFilter }]) && (
+									<span className="text-xs text-slate-500 font-normal italic">{" (filtered)"}</span>
+								)}
+							</span>
+							{/* TOGGLE SHOW MORE/LESS BUTTON */}
+							{dashboardStats?.categories?.length > 3 && (
+								<button
+									onClick={() => setShowAllCategories(!showAllCategories)}
+									className="border-slate-200 text-slate-500 hover:bg-slate-50 text-sm font-normal px-2 py-0.5 border-slate-300 border rounded"
+								>
+									{showAllCategories ? "Show Less" : "Show More"}
+								</button>
 							)}
 						</div>
 						<div className="flex flex-col gap-2">
-							{dashboardStats?.topCategories?.map((category) => (
-								<div key={category.name} className="flex flex-col gap-1.5">
-									<div className="w-full flex justify-between items-center">
-										<div>
-											{category.name} {`(${category.percentage.toFixed()}%)`}
-										</div>
-										<div className="font-semibold">{category.amount.toFixed(2)}</div>
-									</div>
-									<div
-										className="h-2 w-full rounded-3xl overflow-hidden"
-										style={{
-											backgroundColor: category.colorLight,
-											borderWidth: "1px",
-											borderColor: category.colorDark,
-										}}
-									>
-										<div
-											className="h-full"
-											style={{
-												backgroundColor: category.colorDark,
-												width: `${category.percentage}%`,
-											}}
-										></div>
-									</div>
-								</div>
+							{/* TOP 3 CATEGORIES (ALWAYS DISPLAYED) */}
+							{dashboardStats?.categories?.slice(0, 3).map((category) => (
+								<DashboardStatsCategory key={category.name} category={category} />
 							))}
+
+							{/* ANY CATEGORIES BEYOND THE TOP 3 (HIDDEN BY DEFAULT) */}
+							<div className="overflow-hidden">
+								<div
+									ref={extraCategoriesRef}
+									className={`${
+										showAllCategories
+											? "mt-0"
+											: `mt-[${
+													extraCategoriesRef.current
+														? `-${extraCategoriesRef.current.scrollHeight}px`
+														: "-100%"
+													// eslint-disable-next-line no-mixed-spaces-and-tabs
+											  }]`
+									} flex flex-col gap-2 transition-[margin] duration-200`}
+								>
+									{dashboardStats?.categories?.length > 3 && (
+										<>
+											{dashboardStats?.categories
+												?.slice(3, dashboardStats?.categories?.length)
+												.map((category) => (
+													<DashboardStatsCategory key={category.name} category={category} />
+												))}
+										</>
+									)}
+								</div>
+							</div>
 						</div>
 					</>
 				)}
