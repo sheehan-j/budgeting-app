@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useDataStore } from "../util/dataStore";
 import { defaultFilter } from "../constants/Filters";
 import DashboardStatsCategory from "./DashboardStatsCategory";
