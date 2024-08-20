@@ -38,21 +38,17 @@ const App = () => {
 	const {
 		transactions,
 		fetchTransactions,
+		transactionsLoading,
 		categories,
 		fetchCategories,
-		dashboardStats,
-		fetchDashboardStats,
-		filters,
 		merchantSettings,
 		fetchMerchantSettings,
 	} = useDataStore((state) => ({
 		transactions: state.transactions,
 		fetchTransactions: state.fetchTransactions,
+		transactionsLoading: state.transactionsLoading,
 		categories: state.categories,
 		fetchCategories: state.fetchCategories,
-		dashboardStats: state.dashboardStats,
-		fetchDashboardStats: state.fetchDashboardStats,
-		filters: state.filters,
 		merchantSettings: state.merchantSettings,
 		fetchMerchantSettings: state.fetchMerchantSettings,
 	}));
@@ -130,16 +126,15 @@ const App = () => {
 	};
 
 	const updateDataStore = () => {
-		if (transactions === null) fetchTransactions();
+		if (transactions === null && !transactionsLoading) fetchTransactions(); // This will trigger load dashboard stats itself
 		if (categories === null) fetchCategories();
-		if (dashboardStats === null) fetchDashboardStats();
 		if (merchantSettings === null) fetchMerchantSettings();
 	};
 
 	useEffect(() => {
 		updateDataStore();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [transactions, filters, dashboardStats, merchantSettings]);
+	}, []);
 
 	if (loading) return null;
 

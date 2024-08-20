@@ -30,7 +30,6 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 		categoriesLoading: state.categoriesLoading,
 		setNotification: state.setNotification,
 		setDashboardStats: state.setDashboardStats,
-		fetchDashboardStats: state.fetchDashboardStats,
 		dashboardSortState: state.dashboardSortState,
 		setDashboardSortState: state.setDashboardSortState,
 		totalTransactionCount: state.totalTransactionCount,

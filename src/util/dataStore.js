@@ -16,20 +16,18 @@ const store = (set, get) => ({
 
 	transactions: null,
 	setTransactions: (transactions) => set(() => ({ transactions })),
-	transactionsLoading: true,
+	transactionsLoading: false,
 	fetchTransactions: async () => {
-		const { fetchDashboardStats } = get();
+		const { dashboardStats, fetchDashboardStats } = get();
 		set({ transactionsLoading: true });
 		const data = await getTransactions();
 		set({ transactions: data, transactionsLoading: false });
-		fetchDashboardStats();
+		if (dashboardStats === null) fetchDashboardStats();
 	},
 
 	filters: [{ ...defaultFilter }],
 	setFilters: (filters) => {
-		// const { fetchDashboardStats } = get();
 		set(() => ({ filters }));
-		// fetchDashboardStats();
 	},
 
 	configurations: null,
