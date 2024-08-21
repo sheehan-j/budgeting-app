@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 
-const BulkActions = ({ localTransactions }) => {
+const BulkActions = ({ localTransactions, setLocalTransactions }) => {
 	const { bulkActionsMenuVisible, bulkActionsMenuAnimating, openBulkActionsMenu, closeBulkActionsMenu } =
 		useAnimationStore((state) => ({
 			bulkActionsMenuVisible: state.bulkActionsMenuVisible,
@@ -15,7 +15,7 @@ const BulkActions = ({ localTransactions }) => {
 			openBulkActionsMenu: state.openBulkActionsMenu,
 			closeBulkActionsMenu: state.closeBulkActionsMenu,
 		}));
-	const { setTransactions, filters, setDashboardStats, categories, setNotification } = useDataStore((state) => ({
+	const { filters, setDashboardStats, categories, setNotification } = useDataStore((state) => ({
 		setTransactions: state.setTransactions,
 		filters: state.filters,
 		setDashboardStats: state.setDashboardStats,
@@ -31,6 +31,7 @@ const BulkActions = ({ localTransactions }) => {
 			categoryName
 		);
 
+		// If the update was successful, simply update the current set of local transactions with the new categories
 		if (success) await onSuccess(localTransactions.map((t) => (t.selected ? { ...t, categoryName } : t)));
 		else setNotification({ type: "error", message: "Could not update transaction(s)." });
 	};
@@ -42,6 +43,7 @@ const BulkActions = ({ localTransactions }) => {
 			ignored
 		);
 
+		// If the update was successful, simply update the current set of local transactions with the new ignored statuses
 		if (success) await onSuccess(localTransactions.map((t) => (t.selected ? { ...t, ignored } : t)));
 		else setNotification({ type: "error", message: "Could not update transaction(s)." });
 	};
@@ -50,12 +52,13 @@ const BulkActions = ({ localTransactions }) => {
 		closeBulkActionsMenu();
 		const success = await deleteTransactions(localTransactions.filter((t) => t.selected));
 
+		// If the update was successful, simply update the current set of local transactions with the deleted transactions removed
 		if (success) await onSuccess(localTransactions.filter((t) => !t.selected));
 		else setNotification({ type: "error", message: "Could not update transaction(s)." });
 	};
 
 	const onSuccess = async (newTransactions) => {
-		setTransactions(newTransactions);
+		setLocalTransactions(newTransactions);
 		setDashboardStats(await getDashboardStats(newTransactions, filters));
 	};
 
@@ -148,6 +151,7 @@ const BulkActions = ({ localTransactions }) => {
 
 BulkActions.propTypes = {
 	localTransactions: PropTypes.array,
+	setLocalTransactions: PropTypes.array,
 };
 
 export default BulkActions;

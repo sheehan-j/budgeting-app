@@ -4,7 +4,7 @@ import { useAnimationStore } from "../util/animationStore";
 import { filterTransactions } from "../util/filterUtil";
 import { sortTransactions } from "../util/sortUtil";
 import { getDashboardStats } from "../util/statsUtil";
-import { setTransactionCategory } from "../util/supabaseQueries";
+import { getTransactions, setTransactionCategory } from "../util/supabaseQueries";
 import TransactionMenu from "./TransactionMenu";
 import PropTypes from "prop-types";
 import ButtonSpinner from "./ButtonSpinner";
@@ -50,7 +50,14 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 	const [page, setPage] = useState(0);
 	const pageSize = 20;
 
-	// Reapply filters and sorting to local transactions whenver transactions from the store change
+	useEffect(() => {
+		return async () => {
+			setTransactions(await getTransactions());
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// Update the local set of transactions with filters and sorting when relevant state changes
 	useEffect(() => {
 		if (transactions) {
 			let newTransactions = [...transactions];
@@ -58,7 +65,7 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 			newTransactions = sortTransactions(newTransactions, dashboardSortState);
 			setLocalTransactions(newTransactions);
 		}
-	}, [filters, dashboardSortState, transactions, setDashboardStats]);
+	}, [filters, dashboardSortState, transactions]);
 
 	// Whenever a filter is applied, reset to the first page
 	useEffect(() => {
@@ -128,7 +135,10 @@ const TransactionTable = ({ transactions, setTransactions, transactionsLoading }
 								</div>
 								{/* Clear */}
 							</button>
-							<BulkActions localTransactions={localTransactions} />
+							<BulkActions
+								localTransactions={localTransactions}
+								setLocalTransactions={setLocalTransactions}
+							/>
 							<div className="w-[2px] bg-gray-300"></div>
 						</>
 					)}
