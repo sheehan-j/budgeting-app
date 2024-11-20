@@ -97,7 +97,7 @@ const MerchantSettingsItem = ({ item, loading, setLoading }) => {
 									onChange={(e) =>
 										setEditingMerchantSetting({ ...editingMerchantSetting, type: e.target.value })
 									}
-									className="border border-slate-300 text-sm rounded outline-none p-0.5"
+									className="border border-slate-300 text-sm rounded outline-none p-1 bg-white"
 								>
 									<option value="contains">contains</option>
 									<option value="equals">equals</option>
@@ -130,7 +130,7 @@ const MerchantSettingsItem = ({ item, loading, setLoading }) => {
 										category: { ...editingMerchantSetting.category, name: e.target.value },
 									})
 								}
-								className="border border-slate-300 text-sm rounded outline-none p-0.5"
+								className="border border-slate-300 text-sm rounded outline-none p-1 bg-white"
 							>
 								{categories.map((category) => (
 									<option key={category.name} value={category.name}>

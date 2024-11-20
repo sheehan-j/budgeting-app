@@ -78,7 +78,7 @@ const MerchantSettingsItemCreate = ({ loading, setLoading }) => {
 												type: e.target.value,
 											})
 										}
-										className="border border-slate-300 text-sm rounded outline-none p-0.5"
+										className="border border-slate-300 text-sm rounded outline-none p-1 bg-white"
 									>
 										<option value="contains">contains</option>
 										<option value="equals">equals</option>
@@ -110,7 +110,7 @@ const MerchantSettingsItemCreate = ({ loading, setLoading }) => {
 											},
 										})
 									}
-									className="border border-slate-300 text-sm rounded outline-none p-0.5"
+									className="border border-slate-300 text-sm rounded outline-none p-1 bg-white"
 								>
 									{categories.map((category) => (
 										<option key={category.name} value={category.name}>

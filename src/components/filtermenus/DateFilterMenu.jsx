@@ -31,7 +31,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								},
 							})
 						}
-						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{Array.from({ length: 12 }, (_, index) => (
 							<option key={index + 1} value={index + 1}>
@@ -47,7 +47,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								start: { ...selectedFilterOptions.start, day: e.target.value },
 							})
 						}
-						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{daysByMonth[selectedFilterOptions.start.month].map((day) => (
 							<option key={day} value={day}>
@@ -63,7 +63,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								start: { ...selectedFilterOptions.start, year: e.target.value },
 							})
 						}
-						className="add-filter-option flex-[2_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[2_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => (
 							<option key={new Date().getFullYear() - index} value={new Date().getFullYear() - index}>
@@ -91,7 +91,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								},
 							})
 						}
-						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{Array.from({ length: 12 }, (_, index) => (
 							<option key={index + 1} value={index + 1}>
@@ -107,7 +107,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								end: { ...selectedFilterOptions.end, day: e.target.value },
 							})
 						}
-						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[1_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{daysByMonth[selectedFilterOptions.end.month].map((day) => (
 							<option key={day} value={day}>
@@ -123,7 +123,7 @@ const DateFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) => 
 								end: { ...selectedFilterOptions.end, year: e.target.value },
 							})
 						}
-						className="add-filter-option flex-[2_0_0] w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+						className="add-filter-option flex-[2_0_0] w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 					>
 						{Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => (
 							<option key={new Date().getFullYear() - index} value={new Date().getFullYear() - index}>

@@ -84,7 +84,7 @@ const Budgets = () => {
 							<select
 								value={budgetsMonth}
 								onChange={(e) => setBudgetsMonth(e.target.value)}
-								className="add-filter-option text-sm border border-slate-200 rounded p-1 outline-none mr-1"
+								className="add-filter-option text-sm border border-slate-200 rounded p-1 bg-white outline-none mr-1"
 							>
 								{Array.from({ length: 12 }, (_, index) => (
 									<option key={index + 1} value={index + 1}>
@@ -95,7 +95,7 @@ const Budgets = () => {
 							<select
 								value={budgetsYear}
 								onChange={(e) => setBudgetsYear(e.target.value)}
-								className="add-filter-option text-sm border border-slate-200 rounded p-1 outline-none"
+								className="add-filter-option text-sm border border-slate-200 rounded p-1 bg-white outline-none"
 							>
 								{Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => (
 									<option

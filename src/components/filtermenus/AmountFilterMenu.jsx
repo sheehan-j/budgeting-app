@@ -20,7 +20,7 @@ const AmountFilterMenu = ({ selectedFilterOptions, setSelectedFilterOptions }) =
 					onChange={(e) => {
 						setSelectedFilterOptions({ ...selectedFilterOptions, condition: e.target.value });
 					}}
-					className="add-filter-option w-full text-xs border border-slate-200 rounded p-0.5 outline-none"
+					className="add-filter-option w-full text-xs border border-slate-200 rounded p-1 bg-white outline-none"
 				>
 					<option value="lessThan">Less Than</option>
 					<option value="equals">Equals</option>

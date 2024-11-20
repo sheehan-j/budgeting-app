@@ -16,7 +16,7 @@ const CSVSymbolOption = ({ symbolMeaning, firstQuestion, firstOnChange, secondQu
 				<div className="mt-1 flex justify-between">
 					<label>{secondQuestion}</label>
 					<select
-						className="border border-slate-300 text-sm rounded p-0.5"
+						className="border border-slate-300 text-sm rounded p-1 bg-white"
 						value={symbolMeaning}
 						onChange={secondOnChange}
 					>

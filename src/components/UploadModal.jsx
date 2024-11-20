@@ -180,7 +180,7 @@ const UploadModal = () => {
 											Select an upload configuration:{" "}
 										</span>
 										<select
-											className="w-40 p-0.5 rounded border border-slate-300"
+											className="w-40 p-1 bg-white rounded border border-slate-300"
 											value={selectedConfigurationName}
 											onChange={(e) => setselectedConfigurationName(e.target.value)}
 										>
