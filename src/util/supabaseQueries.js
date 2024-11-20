@@ -12,6 +12,10 @@ export const getTransactions = async () => {
 		return [];
 	}
 
+	if (data.length === 100000) {
+		alert("Max transaction limit reached.");
+	}
+
 	return formatTransactions(data);
 };
 
