@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isEmailWhitelisted } from "../util/userUtil";
 import ErrorMessage from "../components/ErrorMessage";
 import supabase from "../config/supabaseClient";
-import { isEmailWhitelisted } from "../util/userUtil";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ const Login = () => {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [loginVisible, setLoginVisible] = useState(true);
 	const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
 	const toggleForm = () => {
 		setEmail("");
@@ -34,6 +36,8 @@ const Login = () => {
 			setError(error.message);
 			return;
 		}
+
+    navigate(0);
 	};
 
 	const handleSignup = async () => {
@@ -56,6 +60,8 @@ const Login = () => {
 			setError(error.message);
 			return;
 		}
+  
+    navigate(0);
 	};
 
 	return (
