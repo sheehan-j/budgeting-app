@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ErrorMessage from "../components/ErrorMessage";
 import supabase from "../config/supabaseClient";
+import { isEmailWhitelisted } from "../util/userUtil";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
@@ -40,6 +41,11 @@ const Login = () => {
 			setError("Passwords do not match");
 			return;
 		}
+
+    if (!(await isEmailWhitelisted(email))) {
+      setError("Sorry, your email is not whitelisted for signup. Please send an email to jordansheehan26@gmail.com to get your email whitelisted.");
+      return;
+    }
 
 		const { error } = await supabase.auth.signUp({
 			email: email,
@@ -83,7 +89,7 @@ const Login = () => {
 							}}
 						/>
 					</div>
-					{/* {!loginVisible && (
+					{!loginVisible && (
 						<div>
 							<div className="text-slate-500 mb-0.5">Confirm Password</div>
 							<input
@@ -96,7 +102,7 @@ const Login = () => {
 								}}
 							/>
 						</div>
-					)} */}
+					)}
 					<button
 						type="submit"
 						className="bg-cGreen-light hover:bg-cGreen-lightHover border border-slate-300 rounded text-sm text-slate-700 p-1"
