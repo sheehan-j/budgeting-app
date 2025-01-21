@@ -1,8 +1,15 @@
 import { create } from "zustand";
-import { getTransactions, getConfigurations, getCategories, getBudgets, getTransactionCount } from "./supabaseQueries";
 import { getDashboardStats } from "./statsUtil";
 import { defaultFilter } from "../constants/Filters";
-import { getMerchantSettings } from "./supabaseQueries";
+import {
+	getTransactions,
+	getConfigurations,
+	getCategories,
+	getBudgets,
+	getTransactionCount,
+	getMerchantSettings,
+	getSpending,
+} from "./supabaseQueries";
 
 const today = new Date();
 
@@ -66,6 +73,18 @@ const store = (set, get) => ({
 	},
 	dashboardSortState: null,
 	setDashboardSortState: (state) => set(() => ({ dashboardSortState: state })),
+
+	spending: null,
+	setSpending: (spending) => set(() => ({ spending })),
+	spendingLoading: true,
+	spendingYear: today.getFullYear(),
+	setSpendingYear: (year) => set(() => ({ spendingYear: year })),
+	fetchSpending: async () => {
+		const { spending, spendingYear } = get();
+		if (spending === null) set({ spendingLoading: true });
+		const data = await getSpending(spendingYear);
+		set({ spending: data, spendingLoading: false });
+	},
 
 	budgets: null,
 	setBudgets: (budgets) => set(() => ({ budgets })),
