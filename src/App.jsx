@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDataStore } from "./util/dataStore";
 import { useAnimationStore } from "./util/animationStore";
 import Dashboard from "./screens/Dashboard";
+import Spending from "./screens/Spending";
 import Budgets from "./screens/Budgets";
 import Settings from "./screens/Settings";
 import Login from "./screens/Login";
@@ -144,6 +145,7 @@ const App = () => {
 				{session ? (
 					<>
 						<Route path="/*" element={<Dashboard />} />
+						<Route path="/spending" element={<Spending />} />
 						<Route path="/settings" element={<Settings />} />
 						<Route path="/budgets" element={<Budgets />} />
 					</>
