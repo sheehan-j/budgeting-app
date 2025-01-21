@@ -156,6 +156,35 @@ export const getCategories = async () => {
 	return data;
 };
 
+export const getSpending = async (year) => {
+	let spending = [];
+	const yearTotals = { Total: 0 };
+	for (let i = 0; i < 12; i++) {
+		const transactions = await getTransactionsByMonth(new Date(year, i, 1));
+		const categoricalSpending = await getCategoricalSpending(transactions);
+
+		// Compute totals
+		let total = 0;
+		Object.keys(categoricalSpending).forEach((categoryName) => {
+			if (!ignoredCategories.includes(categoryName)) total += categoricalSpending[categoryName];
+			if (!Object.keys(yearTotals).includes(categoryName)) yearTotals[categoryName] = 0;
+			yearTotals[categoryName] += categoricalSpending[categoryName];
+		});
+		categoricalSpending["Total"] = total;
+		yearTotals["Total"] += total;
+
+		// Flip the sign of income because it is treated as a negative for the normal transactions table
+		categoricalSpending["Income"] *= -1;
+
+		spending[i] = categoricalSpending;
+	}
+
+	yearTotals["Income"] *= -1; // Flip sign of income because it is normally treated as a negative
+	spending[12] = yearTotals;
+
+	return spending;
+};
+
 export const getBudgets = async (date) => {
 	let { data, error } = await supabase.from("categories").select("*, budgets(*)");
 	if (error) {
