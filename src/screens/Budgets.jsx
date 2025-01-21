@@ -127,8 +127,9 @@ const Budgets = () => {
 					</div>
 
 					{budgetsLoading && (
-						<div className="flex relative justify-center text-sm text-slate-300 items-center pt-10 opacity-80">
+						<div className="flex grow relative justify-center text-sm text-slate-500 items-center opacity-80">
 							<ButtonSpinner />
+							<div className="mt-16">Loading budgets...</div>
 						</div>
 					)}
 
