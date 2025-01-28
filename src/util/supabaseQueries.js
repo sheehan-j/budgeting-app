@@ -299,7 +299,6 @@ export const getUploads = async () => {
 		alert("Could not fetch uploads");
 		return [];
 	}
-	console.log(data);
 	return data;
 };
 
