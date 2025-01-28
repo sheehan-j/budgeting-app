@@ -158,9 +158,9 @@ const ConfigurationCreator = () => {
 	};
 
 	return (
-		<div className="w-full h-full flex bg-white border border-slate-300 rounded-2xl">
+		<div className="w-full h-full flex bg-white rounded-2xl">
 			<section className="flex flex-col w-3/12 border-r-2">
-				<div className="grow overflow-y-auto p-8">
+				<div className="grow overflow-y-auto p-6">
 					<div className="text-lg text-slate-600 font-semibold mb-3">Configurations</div>
 					<div className="flex flex-col gap-4">
 						{!configurationsLoading &&
