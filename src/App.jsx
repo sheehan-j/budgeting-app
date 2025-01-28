@@ -44,6 +44,8 @@ const App = () => {
 		fetchCategories,
 		merchantSettings,
 		fetchMerchantSettings,
+		uploads,
+		fetchUploads,
 	} = useDataStore((state) => ({
 		transactions: state.transactions,
 		fetchTransactions: state.fetchTransactions,
@@ -52,6 +54,8 @@ const App = () => {
 		fetchCategories: state.fetchCategories,
 		merchantSettings: state.merchantSettings,
 		fetchMerchantSettings: state.fetchMerchantSettings,
+		uploads: state.uploads,
+		fetchUploads: state.fetchUploads,
 	}));
 	const [loading, setLoading] = useState(true);
 
@@ -130,6 +134,7 @@ const App = () => {
 		if (transactions === null && !transactionsLoading) fetchTransactions(); // This will trigger load dashboard stats itself
 		if (categories === null) fetchCategories();
 		if (merchantSettings === null) fetchMerchantSettings();
+		if (uploads === null) fetchUploads();
 	};
 
 	useEffect(() => {
