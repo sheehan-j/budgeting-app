@@ -1,13 +1,12 @@
 import { getTransactions } from "./supabaseQueries";
 
-export const parseTransactionsFromCSV = (event, configuration, userId) => {
-	const fileContent = event.target.result;
+export const parseTransactionsFromCSV = (fileContent, configuration, userId, uploadId) => {
 	const transactions = [];
 
 	const rows = fileContent.split("\n");
 	if (rows[rows.length - 1] === "") rows.pop();
 	if (configuration.hasHeader) rows.shift();
-	rows.forEach((row, index) => {
+	rows.forEach((row) => {
 		row = row.replace(", ", ",");
 		const cells = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
 
@@ -15,7 +14,8 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 			userId,
 			configurationName: configuration.name,
 			categoryName: "Uncategorized",
-			tempInsertId: index, // Makes it easier to track which transactions are duplicates
+			tempInsertId: crypto.randomUUID(), // Makes it easier to track which transactions are duplicates
+			uploadId,
 		};
 		cells.forEach((cell, index) => {
 			if (cell[0] == '"' && cell[cell.length - 1] == '"') cell = cell.substring(1, cell.length - 1);
@@ -87,7 +87,7 @@ export const parseTransactionsFromCSV = (event, configuration, userId) => {
 	return transactions;
 };
 
-export const checkForDuplicateTransactions = async (transactions, configuration) => {
+export const checkForDuplicateTransactions = async (transactions) => {
 	const existingTransactions = await getTransactions();
 	const duplicateTransactions = [];
 	transactions.forEach((transaction) => {
@@ -97,7 +97,7 @@ export const checkForDuplicateTransactions = async (transactions, configuration)
 					existingTransaction.merchant === transaction.merchant &&
 					existingTransaction.amount === transaction.amount &&
 					existingTransaction.date === transaction.date &&
-					existingTransaction.configurationName === configuration
+					existingTransaction.configurationName === transaction.configurationName
 			)
 		) {
 			duplicateTransactions.push({ ...transaction, include: false });
