@@ -151,7 +151,7 @@ const BulkActions = ({ localTransactions, setLocalTransactions }) => {
 
 BulkActions.propTypes = {
 	localTransactions: PropTypes.array,
-	setLocalTransactions: PropTypes.array,
+	setLocalTransactions: PropTypes.func,
 };
 
 export default BulkActions;
