@@ -4,6 +4,7 @@ import { ignoredCategories } from "../constants/Categories";
 
 const transactionsTableName = import.meta.env.DEV ? "transactions_dev" : "transactions";
 const budgetsTableName = import.meta.env.DEV ? "budgets_dev" : "budgets";
+const uploadsTableName = import.meta.env.DEV ? "uploads_dev" : "uploads";
 
 export const getTransactions = async () => {
 	let { data, error } = await supabase.from(transactionsTableName).select("*");
@@ -290,4 +291,26 @@ export const deleteMerchantSetting = async (merchantSettingId) => {
 	const { error } = await supabase.from("merchants").delete().eq("id", merchantSettingId);
 	if (error) return false;
 	return true;
+};
+
+export const getUploads = async () => {
+	const { data, error } = await supabase.from(uploadsTableName).select("*");
+	if (error) {
+		alert("Could not fetch uploads");
+		return [];
+	}
+	return data;
+};
+
+export const createUpload = async (userId, uploadId, files, transactionsUploaded) => {
+	const { error } = await supabase
+		.from(uploadsTableName)
+		.insert({ id: uploadId, userId, files, transactionsUploaded });
+	if (error) throw Error("Could not upload transactions. Please try again later.");
+};
+
+// This will CASCADE delete the any transactions that reference this upload
+export const deleteUpload = async (uploadId) => {
+	const { error } = await supabase.from(uploadsTableName).delete().eq("id", uploadId);
+	if (error) throw Error(error.message);
 };

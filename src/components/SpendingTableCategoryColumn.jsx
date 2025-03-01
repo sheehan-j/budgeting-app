@@ -1,4 +1,5 @@
 import { ignoredCategories } from "../constants/Categories";
+import { Fragment } from "react";
 import PropTypes from "prop-types";
 
 const SpendingTableCategoryColumn = ({ categories, isFirstColumn }) => {
@@ -16,7 +17,7 @@ const SpendingTableCategoryColumn = ({ categories, isFirstColumn }) => {
 			{categories
 				.filter((category) => !ignoredCategories.includes(category.name))
 				.map((category) => (
-					<>
+					<Fragment key={category.name}>
 						<div className="h-[1px] bg-slate-300 dark:bg-neutral-500"></div>
 						<div className={`flex justify-start items-center grow px-2 min-h-11 py-1`} key={category.name}>
 							<div
@@ -29,7 +30,7 @@ const SpendingTableCategoryColumn = ({ categories, isFirstColumn }) => {
 								{category.name}
 							</div>
 						</div>
-					</>
+					</Fragment>
 				))}
 			<div
 				className="flex justify-start items-center grow px-2 py-1 mb-5 min-h-11 bg-gray-50 dark:bg-neutral-500"
@@ -44,7 +45,7 @@ const SpendingTableCategoryColumn = ({ categories, isFirstColumn }) => {
 			{categories
 				.filter((category) => ignoredCategories.includes(category.name))
 				.map((category, index) => (
-					<>
+					<Fragment key={category.name}>
 						{index !== 0 && <div className="h-[1px] bg-slate-300 dark:bg-neutral-500"></div>}
 						<div className="flex justify-start items-center grow px-2 py-0.5 min-h-11" key={category.name}>
 							<div
@@ -57,7 +58,7 @@ const SpendingTableCategoryColumn = ({ categories, isFirstColumn }) => {
 								{category.name}
 							</div>
 						</div>
-					</>
+					</Fragment>
 				))}
 		</div>
 	);

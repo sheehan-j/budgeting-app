@@ -1,17 +1,18 @@
 import { useEffect } from "react";
+import { useDataStore } from "../util/dataStore";
 import ConfigurationCreator from "../components/ConfigurationCreator";
 import MerchantSettings from "../components/MerchantSettings";
+import Uploads from "../components/Uploads";
 import Navbar from "../components/Navbar";
 import NotificationBanner from "../components/NotificationBanner";
 import SettingsNavBar from "../components/SettingsNavBar";
-import { useDataStore } from "../util/dataStore";
 
 const Settings = () => {
 	const { activeSetting, setActiveSetting } = useDataStore((state) => ({
 		activeSetting: state.activeSetting,
 		setActiveSetting: state.setActiveSetting,
 	}));
-	const settings = ["Configurations", "Merchants"];
+	const settings = ["Configurations", "Merchants", "Uploads"];
 
 	useEffect(() => {
 		if (activeSetting === null) setActiveSetting(settings[0]);
@@ -27,6 +28,7 @@ const Settings = () => {
 				<div className="grow h-full flex bg-white border border-slate-300 rounded-2xl">
 					{(activeSetting === "Configurations" || activeSetting === null) && <ConfigurationCreator />}
 					{activeSetting === "Merchants" && <MerchantSettings />}
+					{activeSetting === "Uploads" && <Uploads />}
 				</div>
 			</div>
 			<NotificationBanner />

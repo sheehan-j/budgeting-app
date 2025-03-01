@@ -9,6 +9,7 @@ import {
 	getTransactionCount,
 	getMerchantSettings,
 	getSpending,
+	getUploads,
 } from "./supabaseQueries";
 
 const today = new Date();
@@ -112,6 +113,15 @@ const store = (set, get) => ({
 		set({ merchantSettingsLoading: true });
 		const data = await getMerchantSettings();
 		set({ merchantSettings: data, merchantSettingsLoading: false });
+	},
+
+	uploads: null,
+	setUploads: (uploads) => set(() => ({ uploads })),
+	uploadsLoading: true,
+	fetchUploads: async () => {
+		set({ uploadsLoading: true });
+		const data = await getUploads();
+		set({ uploads: data, uploadsLoading: false });
 	},
 });
 

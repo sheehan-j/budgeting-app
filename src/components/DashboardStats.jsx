@@ -122,10 +122,17 @@ const DashboardStats = () => {
 								</button>
 							)}
 						</div>
-						<div className="flex flex-col gap-2">
+						{dashboardStats?.categories?.length == 0 && (
+							<div className="text-slate-500 opacity-75">
+								No transactions found under the current filter
+							</div>
+						)}
+						<div className="flex flex-col">
 							{/* TOP 3 CATEGORIES (ALWAYS DISPLAYED) */}
-							{dashboardStats?.categories?.slice(0, 3).map((category) => (
-								<DashboardStatsCategory key={category.name} category={category} />
+							{dashboardStats?.categories?.slice(0, 3).map((category, index) => (
+								<span key={category.name} className={`${index < 2 || showAllCategories ? "mb-2" : ""}`}>
+									<DashboardStatsCategory key={category.name} category={category} />
+								</span>
 							))}
 
 							{/* ANY CATEGORIES BEYOND THE TOP 3 (HIDDEN BY DEFAULT) */}
